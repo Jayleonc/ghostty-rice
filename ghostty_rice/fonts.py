@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import platform
 import re
+import shutil
+import subprocess
 from dataclasses import dataclass
+from pathlib import Path
 
 from ghostty_rice.paths import ghostty_config_file
 from ghostty_rice.profile import update_base_settings
@@ -26,6 +30,26 @@ _FONT_PRESETS: list[FontPreset] = [
         description="Balanced default — excellent readability and code density",
         settings={
             "font-family": '"JetBrains Mono"',
+            "font-size": "13",
+            "adjust-cell-height": "8%",
+            "font-thicken": "true",
+        },
+    ),
+    FontPreset(
+        name="SF Mono",
+        description="macOS native classic — crisp system-level rendering",
+        settings={
+            "font-family": '"SF Mono"',
+            "font-size": "13",
+            "adjust-cell-height": "8%",
+            "font-thicken": "true",
+        },
+    ),
+    FontPreset(
+        name="Menlo",
+        description="macOS built-in fallback — stable and universally available",
+        settings={
+            "font-family": '"Menlo"',
             "font-size": "13",
             "adjust-cell-height": "8%",
             "font-thicken": "true",
@@ -117,3 +141,42 @@ def current_font_family() -> str | None:
             return value[1:-1]
         return value
     return None
+
+
+def installed_font_families() -> set[str]:
+    """Return installed font families discoverable by Ghostty."""
+    binary = _ghostty_binary()
+    if not binary:
+        return set()
+
+    try:
+        result = subprocess.run(
+            [binary, "+list-fonts"],
+            capture_output=True,
+            text=True,
+            timeout=8,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return set()
+
+    output = result.stdout
+    families: set[str] = set()
+    for raw in output.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        if line.lower().startswith("error:"):
+            continue
+        if raw.startswith(" ") or raw.startswith("\t"):
+            continue
+        families.add(line)
+    return families
+
+
+def _ghostty_binary() -> str | None:
+    """Return path to Ghostty binary for helper actions."""
+    if platform.system() == "Darwin":
+        mac_binary = Path("/Applications/Ghostty.app/Contents/MacOS/ghostty")
+        if mac_binary.exists():
+            return str(mac_binary)
+    return shutil.which("ghostty")

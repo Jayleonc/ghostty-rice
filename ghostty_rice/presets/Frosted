@@ -22,13 +22,15 @@
 
 # --- Theme ---
 theme = Catppuccin Latte
+background = #ece9df
+foreground = #2f3648
 
 # --- Window ---
 # Light themes need MORE opacity than dark themes. Text on light
 # backgrounds loses contrast faster with transparency because
 # most wallpapers have dark regions that muddy the bright base.
-background-opacity = 0.90
-background-blur = macos-glass-clear
+background-opacity = 0.97
+background-blur = macos-glass-regular
 window-padding-x = 16
 window-padding-y = 12
 window-padding-color = extend
@@ -55,4 +57,4 @@ unfocused-split-opacity = 0.85
 # --- Accessibility ---
 # Bumped for light theme: light backgrounds are more sensitive
 # to contrast issues than dark ones.
-minimum-contrast = 5.0
+minimum-contrast = 6.0

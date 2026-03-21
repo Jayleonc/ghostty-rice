@@ -12,7 +12,13 @@ from rich.table import Table
 
 from ghostty_rice import __version__
 from ghostty_rice.colors import show_all_colors, show_profile_colors
-from ghostty_rice.fonts import FontPreset, apply_font_preset, current_font_family, list_font_presets
+from ghostty_rice.fonts import (
+    FontPreset,
+    apply_font_preset,
+    current_font_family,
+    installed_font_families,
+    list_font_presets,
+)
 from ghostty_rice.paths import ghostty_config_dir, ghostty_config_file, user_profiles_dir
 from ghostty_rice.platform import get_platform
 from ghostty_rice.preview import preview_profile
@@ -360,10 +366,24 @@ def switch_cmd(no_reload: bool) -> None:
 @click.option("--no-reload", is_flag=True, help="Don't auto-reload Ghostty config.")
 def font_cmd(no_reload: bool) -> None:
     """Interactive font preset picker with immediate preview."""
-    presets = list_font_presets()
+    all_presets = list_font_presets()
+    installed = installed_font_families()
+    if installed:
+        presets = [
+            preset
+            for preset in all_presets
+            if preset.settings.get("font-family", "").strip('"') in installed
+        ]
+    else:
+        presets = all_presets
     if not presets:
         console.print("[yellow]No font presets available.[/yellow]")
         return
+
+    if installed and len(presets) < len(all_presets):
+        console.print(
+            f"[dim]Using {len(presets)}/{len(all_presets)} presets based on installed fonts.[/dim]"
+        )
 
     snapshot_existed, snapshot_content = _capture_config_snapshot()
     current_family = current_font_family()

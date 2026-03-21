@@ -9,7 +9,7 @@ author = "ghostty-rice"
 tags = ["dark", "cyberpunk", "glass", "holographic", "immersive"]
 
 [profiles."Frosted"]
-description = "Morning studio — macOS frosted glass, light theme tuned for daylight readability"
+description = "Morning studio — macOS frosted glass with stronger foreground contrast"
 author = "ghostty-rice"
 tags = ["light", "glass", "macos", "native", "daytime"]
 

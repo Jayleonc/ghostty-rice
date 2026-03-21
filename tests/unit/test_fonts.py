@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import subprocess
 from unittest.mock import patch
 
 from ghostty_rice.fonts import (
     apply_font_preset,
     current_font_family,
     get_font_preset,
+    installed_font_families,
     list_font_presets,
 )
 
@@ -40,3 +42,23 @@ def test_apply_font_preset_updates_base_settings() -> None:
         apply_font_preset(preset)
 
     mock_update.assert_called_once_with(preset.settings)
+
+
+def test_installed_font_families_parses_ghostty_output() -> None:
+    output = (
+        "error: SentryInitFailed\n"
+        "JetBrains Mono\n"
+        "  JetBrains Mono Regular\n"
+        "\n"
+        "Menlo\n"
+        "  Menlo Regular\n"
+    )
+    completed = subprocess.CompletedProcess(args=[], returncode=0, stdout=output, stderr="")
+
+    with (
+        patch("ghostty_rice.fonts._ghostty_binary", return_value="/tmp/ghostty"),
+        patch("ghostty_rice.fonts.subprocess.run", return_value=completed),
+    ):
+        families = installed_font_families()
+
+    assert families == {"JetBrains Mono", "Menlo"}

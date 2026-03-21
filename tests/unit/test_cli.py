@@ -177,6 +177,7 @@ def test_cli_font_command() -> None:
     )
     with (
         patch("ghostty_rice.cli.list_font_presets", return_value=[selected]),
+        patch("ghostty_rice.cli.installed_font_families", return_value={"JetBrains Mono"}),
         patch("ghostty_rice.cli.current_font_family", return_value="Fira Code"),
         patch("ghostty_rice.cli._capture_config_snapshot", return_value=(True, "orig")),
         patch("ghostty_rice.cli._choose_font_interactively", return_value=selected),
@@ -190,3 +191,32 @@ def test_cli_font_command() -> None:
     assert "Font preset:" in result.output
     assert "JetBrains Mono" in result.output
     assert "Config reloaded." in result.output
+
+
+def test_cli_font_filters_to_installed_presets() -> None:
+    runner = CliRunner()
+    available = FontPreset(
+        name="JetBrains Mono",
+        description="desc",
+        settings={"font-family": '"JetBrains Mono"', "font-size": "13"},
+    )
+    missing = FontPreset(
+        name="Berkeley Mono",
+        description="desc",
+        settings={"font-family": '"Berkeley Mono"', "font-size": "13"},
+    )
+    with (
+        patch("ghostty_rice.cli.list_font_presets", return_value=[available, missing]),
+        patch("ghostty_rice.cli.installed_font_families", return_value={"JetBrains Mono"}),
+        patch("ghostty_rice.cli.current_font_family", return_value="JetBrains Mono"),
+        patch("ghostty_rice.cli._capture_config_snapshot", return_value=(True, "orig")),
+        patch("ghostty_rice.cli._choose_font_interactively", return_value=available) as mock_choose,
+        patch("ghostty_rice.cli.apply_font_preset"),
+        patch("ghostty_rice.cli.reload_ghostty", return_value=(True, "Config reloaded.")),
+    ):
+        result = runner.invoke(cli, ["font"])
+
+    assert result.exit_code == 0
+    passed_presets = mock_choose.call_args.args[0]
+    assert len(passed_presets) == 1
+    assert passed_presets[0].name == "JetBrains Mono"
