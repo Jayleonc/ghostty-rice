@@ -1,10 +1,42 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║  Minimal — No chrome, no blur, just code                    ║
+# ╚══════════════════════════════════════════════════════════════╝
+#
+# A distraction-free profile for developers who want nothing between
+# them and their code. No titlebar, no transparency, no blur effects.
+# Generous padding gives the text room to breathe. The bar cursor with
+# no blink keeps your focus on the code, not the cursor.
+#
+# Best paired with: Iosevka, Pragmasevka, or Input Mono
+
+# --- Theme ---
 theme = Builtin Tango Dark
+
+# --- Window ---
+# Fully opaque — no glass, no distractions
 background-opacity = 1.0
-macos-titlebar-style = hidden
-window-decoration = false
 window-padding-x = 20
 window-padding-y = 16
+window-padding-color = extend
+
+# --- Titlebar ---
+# Remove all window chrome
+macos-titlebar-style = hidden
+window-decoration = false
+
+# --- Cursor ---
+# Steady bar cursor — minimal movement on screen
 cursor-style = bar
 cursor-style-blink = false
 cursor-color = cell-foreground
 cursor-text = cell-background
+
+# --- Selection ---
+selection-background = #555753
+selection-foreground = #eeeeec
+
+# --- Splits ---
+unfocused-split-opacity = 0.75
+
+# --- Accessibility ---
+minimum-contrast = 4.5

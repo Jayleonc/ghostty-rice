@@ -1,21 +1,20 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Frosted — macOS native frosted glass, light and airy       ║
+# ║  Dracula — A dark theme for vampires and developers         ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# A light theme that embraces macOS design language. The frosted glass
-# effect with Catppuccin Latte creates a native, polished look that
-# blends seamlessly with the rest of your desktop. Perfect for daytime
-# coding with natural light.
+# The iconic dark theme with vibrant purple, pink, and cyan accents.
+# Dracula has become one of the most ported themes in the developer
+# ecosystem — its high-contrast palette makes code pop while the dark
+# purple-grey background remains easy on the eyes at night.
 #
-# Best paired with: SF Mono, Menlo, or Monaspace Neon
+# Best paired with: Fira Code, Cascadia Code PL, or Monaspace Radon
 
 # --- Theme ---
-theme = Catppuccin Latte
+theme = Dracula
 
 # --- Window ---
-# Strong transparency for the frosted glass look
-background-opacity = 0.80
-background-blur = macos-glass-clear
+background-opacity = 0.90
+background-blur = macos-glass-regular
 window-padding-x = 14
 window-padding-y = 10
 window-padding-color = extend
@@ -31,12 +30,12 @@ cursor-color = cell-foreground
 cursor-text = cell-background
 
 # --- Selection ---
-# Catppuccin Latte surface1 for light-mode selection
-selection-background = #bcc0cc
-selection-foreground = #4c4f69
+# Dracula selection — semi-transparent purple
+selection-background = #44475a
+selection-foreground = #f8f8f2
 
 # --- Splits ---
-unfocused-split-opacity = 0.85
+unfocused-split-opacity = 0.80
 
 # --- Accessibility ---
 minimum-contrast = 4.5

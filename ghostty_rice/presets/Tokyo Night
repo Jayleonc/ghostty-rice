@@ -1,21 +1,20 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Frosted — macOS native frosted glass, light and airy       ║
+# ║  Tokyo Night — A clean dark theme celebrating city lights    ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# A light theme that embraces macOS design language. The frosted glass
-# effect with Catppuccin Latte creates a native, polished look that
-# blends seamlessly with the rest of your desktop. Perfect for daytime
-# coding with natural light.
+# Inspired by the beautiful night sky of Tokyo. Features a carefully
+# balanced dark blue background with vibrant yet tasteful accent colors.
+# The color choices are optimized for modern development workflows —
+# great syntax highlighting contrast without being harsh.
 #
-# Best paired with: SF Mono, Menlo, or Monaspace Neon
+# Best paired with: Cascadia Code, Fira Code, or Monaspace Argon
 
 # --- Theme ---
-theme = Catppuccin Latte
+theme = Tokyo Night
 
 # --- Window ---
-# Strong transparency for the frosted glass look
-background-opacity = 0.80
-background-blur = macos-glass-clear
+background-opacity = 0.90
+background-blur = macos-glass-regular
 window-padding-x = 14
 window-padding-y = 10
 window-padding-color = extend
@@ -31,12 +30,12 @@ cursor-color = cell-foreground
 cursor-text = cell-background
 
 # --- Selection ---
-# Catppuccin Latte surface1 for light-mode selection
-selection-background = #bcc0cc
-selection-foreground = #4c4f69
+# Tokyo Night selection blue
+selection-background = #33467c
+selection-foreground = #c0caf5
 
 # --- Splits ---
-unfocused-split-opacity = 0.85
+unfocused-split-opacity = 0.80
 
 # --- Accessibility ---
 minimum-contrast = 4.5

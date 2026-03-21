@@ -1,11 +1,41 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║  Rosé Pine — All natural pine, faux fur, and a bit of soho  ║
+# ╚══════════════════════════════════════════════════════════════╝
+#
+# An elegant theme that automatically adapts to your system appearance.
+# Dark mode uses Rosé Pine's signature muted golds and subtle roses.
+# Light mode switches to Rosé Pine Dawn with warm, paper-like tones.
+#
+# Best paired with: Maple Mono, Berkeley Mono, or Inter Mono
+
+# --- Theme (auto light/dark switching) ---
 theme = light:Rose Pine Dawn,dark:Rose Pine
+
+# --- Window ---
 background-opacity = 0.93
 background-blur = macos-glass-regular
-macos-titlebar-style = transparent
-macos-icon = glass
 window-padding-x = 14
 window-padding-y = 10
+window-padding-color = extend
+
+# --- Titlebar ---
+macos-titlebar-style = transparent
+macos-icon = glass
+
+# --- Cursor ---
+# Bar cursor suits Rosé Pine's elegant, minimal aesthetic
 cursor-style = bar
 cursor-style-blink = true
 cursor-color = cell-foreground
 cursor-text = cell-background
+
+# --- Selection ---
+# Rosé Pine highlight-med for a gentle selection overlay
+selection-background = #44415a
+selection-foreground = #e0def4
+
+# --- Splits ---
+unfocused-split-opacity = 0.80
+
+# --- Accessibility ---
+minimum-contrast = 4.5

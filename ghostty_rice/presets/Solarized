@@ -1,21 +1,21 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Frosted — macOS native frosted glass, light and airy       ║
+# ║  Solarized — Precision colors for machines and people       ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# A light theme that embraces macOS design language. The frosted glass
-# effect with Catppuccin Latte creates a native, polished look that
-# blends seamlessly with the rest of your desktop. Perfect for daytime
-# coding with natural light.
+# The scientifically engineered color scheme by Ethan Schoonover.
+# Solarized uses carefully chosen CIELAB lightness relationships and
+# a unique set of sixteen colors designed for both light and dark modes.
+# Auto-switches between Solarized Dark and Light based on system setting.
 #
-# Best paired with: SF Mono, Menlo, or Monaspace Neon
+# Best paired with: Inconsolata, Droid Sans Mono, or Ubuntu Mono
 
-# --- Theme ---
-theme = Catppuccin Latte
+# --- Theme (auto light/dark switching) ---
+theme = light:Solarized Light,dark:Solarized Dark
 
 # --- Window ---
-# Strong transparency for the frosted glass look
-background-opacity = 0.80
-background-blur = macos-glass-clear
+# Near-opaque to preserve Solarized's precise color relationships
+background-opacity = 0.96
+background-blur = macos-glass-regular
 window-padding-x = 14
 window-padding-y = 10
 window-padding-color = extend
@@ -31,9 +31,9 @@ cursor-color = cell-foreground
 cursor-text = cell-background
 
 # --- Selection ---
-# Catppuccin Latte surface1 for light-mode selection
-selection-background = #bcc0cc
-selection-foreground = #4c4f69
+# Solarized base01 for selection
+selection-background = #586e75
+selection-foreground = #fdf6e3
 
 # --- Splits ---
 unfocused-split-opacity = 0.85

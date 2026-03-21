@@ -1,23 +1,22 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Frosted — macOS native frosted glass, light and airy       ║
+# ║  Nord — Arctic, north-bluish color palette                  ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# A light theme that embraces macOS design language. The frosted glass
-# effect with Catppuccin Latte creates a native, polished look that
-# blends seamlessly with the rest of your desktop. Perfect for daytime
-# coding with natural light.
+# Inspired by the colors of the Arctic. Nord uses cool, bluish tones
+# that create a calm, focused environment. The muted palette is easy on
+# the eyes while maintaining excellent readability. A favorite among
+# developers who prefer understated elegance over vibrant colors.
 #
-# Best paired with: SF Mono, Menlo, or Monaspace Neon
+# Best paired with: JetBrains Mono, Victor Mono, or Source Code Pro
 
 # --- Theme ---
-theme = Catppuccin Latte
+theme = Nord
 
 # --- Window ---
-# Strong transparency for the frosted glass look
-background-opacity = 0.80
-background-blur = macos-glass-clear
-window-padding-x = 14
-window-padding-y = 10
+background-opacity = 0.94
+background-blur = macos-glass-regular
+window-padding-x = 12
+window-padding-y = 8
 window-padding-color = extend
 
 # --- Titlebar ---
@@ -31,9 +30,9 @@ cursor-color = cell-foreground
 cursor-text = cell-background
 
 # --- Selection ---
-# Catppuccin Latte surface1 for light-mode selection
-selection-background = #bcc0cc
-selection-foreground = #4c4f69
+# Nord polar night 3 for selection
+selection-background = #4c566a
+selection-foreground = #eceff4
 
 # --- Splits ---
 unfocused-split-opacity = 0.85

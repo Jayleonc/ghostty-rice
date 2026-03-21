@@ -1,23 +1,22 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Frosted — macOS native frosted glass, light and airy       ║
+# ║  Gruvbox — Retro groove with warm, earthy tones             ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# A light theme that embraces macOS design language. The frosted glass
-# effect with Catppuccin Latte creates a native, polished look that
-# blends seamlessly with the rest of your desktop. Perfect for daytime
-# coding with natural light.
+# A retro-inspired theme with warm, earthy colors. Gruvbox Dark Hard
+# uses a deep background with high-contrast warm accents — oranges,
+# yellows, and aquas that feel both vintage and modern. Particularly
+# popular among Vim/Neovim users and fans of the "cozy terminal" look.
 #
-# Best paired with: SF Mono, Menlo, or Monaspace Neon
+# Best paired with: Iosevka Term, Hack, or Fira Mono
 
 # --- Theme ---
-theme = Catppuccin Latte
+theme = Gruvbox Dark Hard
 
 # --- Window ---
-# Strong transparency for the frosted glass look
-background-opacity = 0.80
-background-blur = macos-glass-clear
-window-padding-x = 14
-window-padding-y = 10
+background-opacity = 0.95
+background-blur = macos-glass-regular
+window-padding-x = 12
+window-padding-y = 8
 window-padding-color = extend
 
 # --- Titlebar ---
@@ -25,15 +24,16 @@ macos-titlebar-style = transparent
 macos-icon = glass
 
 # --- Cursor ---
-cursor-style = block
+# Underline cursor for the retro terminal feel
+cursor-style = underline
 cursor-style-blink = true
 cursor-color = cell-foreground
 cursor-text = cell-background
 
 # --- Selection ---
-# Catppuccin Latte surface1 for light-mode selection
-selection-background = #bcc0cc
-selection-foreground = #4c4f69
+# Gruvbox bg3 for warm selection
+selection-background = #665c54
+selection-foreground = #ebdbb2
 
 # --- Splits ---
 unfocused-split-opacity = 0.85

@@ -78,15 +78,20 @@ rice doctor
 rice current
 ```
 
-## 内置方案
+## 内置方案 (10)
 
 | 方案 | 风格 |
 |------|------|
-| ☕ **Catppuccin Mocha** | 温暖柔和，程序员圈最火的配色 |
-| 🌲 **Rose Pine** | 优雅暗色，跟随系统自动切换明暗 |
-| 🤖 **Cyber** | 赛博朋克 —— 高透明度、隐藏标题栏、全息图标 |
-| ⬜ **Minimal** | 极简 —— 无标题栏、无模糊、只有代码 |
-| 🧊 **Frosted** | macOS 原生毛玻璃，亮色模式 |
+| **Catppuccin Mocha** | 温暖柔和，程序员圈最火的配色 |
+| **Rose Pine** | 优雅暗色，跟随系统自动切换明暗 |
+| **Cyber** | 赛博朋克 —— 高透明度、隐藏标题栏、全息图标 |
+| **Minimal** | 极简 —— 无标题栏、无模糊、只有代码 |
+| **Frosted** | macOS 原生毛玻璃，亮色模式 |
+| **Nord** | 北极冰蓝，冷静专注 |
+| **Tokyo Night** | 东京夜色，现代深蓝暗色主题 |
+| **Gruvbox** | 复古暖调，Vim 用户最爱 |
+| **Dracula** | 经典暗色，标志性紫粉配色 |
+| **Solarized** | 科学配色，支持自动明暗切换 |
 
 ## 自定义方案
 
@@ -100,12 +105,11 @@ rice create "My Theme" --from "Catppuccin Mocha"
 
 **2. 或者从零开始：**
 
-在 Ghostty 配置目录的 `rice-profiles/` 下创建文件：
+在 rice 配置目录下创建文件：
 
-| 平台 | 路径 |
-|------|------|
-| macOS | `~/Library/Application Support/com.mitchellh.ghostty/rice-profiles/` |
-| Linux | `~/.config/ghostty/rice-profiles/` |
+```
+~/.config/ghostty/rice/profiles/
+```
 
 ```ini
 theme = Catppuccin Mocha

@@ -1,11 +1,40 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║  Catppuccin Mocha — Warm, cozy, the most popular dev palette ║
+# ╚══════════════════════════════════════════════════════════════╝
+#
+# A soothing dark theme with pastel accents. Catppuccin Mocha uses warm
+# tones that reduce eye strain during long coding sessions while keeping
+# text highly readable with a balanced contrast ratio.
+#
+# Best paired with: JetBrains Mono, Fira Code, or Cascadia Code
+
+# --- Theme ---
 theme = Catppuccin Mocha
+
+# --- Window ---
 background-opacity = 0.92
 background-blur = macos-glass-regular
-macos-titlebar-style = transparent
-macos-icon = glass
 window-padding-x = 12
 window-padding-y = 8
+window-padding-color = extend
+
+# --- Titlebar ---
+macos-titlebar-style = transparent
+macos-icon = glass
+
+# --- Cursor ---
 cursor-style = block
 cursor-style-blink = true
 cursor-color = cell-foreground
 cursor-text = cell-background
+
+# --- Selection ---
+# Catppuccin surface2 for subtle selection highlighting
+selection-background = #585b70
+selection-foreground = #cdd6f4
+
+# --- Splits ---
+unfocused-split-opacity = 0.85
+
+# --- Accessibility ---
+minimum-contrast = 4.5

@@ -76,15 +76,20 @@ rice doctor
 rice current
 ```
 
-## Built-in Profiles
+## Built-in Profiles (10)
 
 | Profile | Style |
 |---------|-------|
-| ☕ **Catppuccin Mocha** | Warm, cozy, the most popular dev palette |
-| 🌲 **Rose Pine** | Elegant dark with automatic light/dark switching |
-| 🤖 **Cyber** | High transparency, hidden chrome, holographic icon |
-| ⬜ **Minimal** | No titlebar, no blur, just code |
-| 🧊 **Frosted** | macOS native frosted glass, light mode |
+| **Catppuccin Mocha** | Warm, cozy, the most popular dev palette |
+| **Rose Pine** | Elegant dark with auto light/dark switching |
+| **Cyber** | High transparency, hidden chrome, holographic icon |
+| **Minimal** | No chrome, no blur, just code |
+| **Frosted** | macOS native frosted glass, light mode |
+| **Nord** | Arctic, north-bluish palette — calm and focused |
+| **Tokyo Night** | Clean dark theme celebrating city lights |
+| **Gruvbox** | Retro groove with warm, earthy tones |
+| **Dracula** | Iconic dark theme with vibrant purple and pink |
+| **Solarized** | Scientific palette with auto light/dark switching |
 
 ## Custom Profiles
 
@@ -98,12 +103,11 @@ rice create "My Theme" --from "Catppuccin Mocha"
 
 **2. Or write one from scratch:**
 
-Create a file in your Ghostty config directory under `rice-profiles/`:
+Create a file in the rice profiles directory:
 
-| Platform | Path |
-|----------|------|
-| macOS | `~/Library/Application Support/com.mitchellh.ghostty/rice-profiles/` |
-| Linux | `~/.config/ghostty/rice-profiles/` |
+```
+~/.config/ghostty/rice/profiles/
+```
 
 ```ini
 theme = Catppuccin Mocha

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import platform
 from pathlib import Path
 
@@ -9,12 +10,16 @@ _BUNDLED_PRESETS = Path(__file__).parent / "presets"
 
 
 def ghostty_config_dir() -> Path:
-    """Return the Ghostty configuration directory for the current platform."""
+    """Return the Ghostty configuration directory for the current platform.
+
+    Always uses ~/.config/ghostty regardless of platform, following the
+    XDG convention for a consistent and accessible path.
+    """
     system = platform.system()
     if system == "Darwin":
-        return Path.home() / "Library" / "Application Support" / "com.mitchellh.ghostty"
+        return Path.home() / ".config" / "ghostty"
     elif system == "Linux":
-        xdg = Path(__import__("os").environ.get("XDG_CONFIG_HOME", str(Path.home() / ".config")))
+        xdg = Path(os.environ.get("XDG_CONFIG_HOME", str(Path.home() / ".config")))
         return xdg / "ghostty"
     else:
         raise RuntimeError(f"Unsupported platform: {system}")
@@ -25,9 +30,20 @@ def ghostty_config_file() -> Path:
     return ghostty_config_dir() / "config"
 
 
+def rice_dir() -> Path:
+    """Return the rice data directory (~/.config/ghostty/rice/).
+
+    This is the root for all rice-managed data, with subdirectories for
+    profiles, backups, and future extensions.
+    """
+    d = ghostty_config_dir() / "rice"
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
 def user_profiles_dir() -> Path:
     """Return the directory where user profiles are stored."""
-    d = ghostty_config_dir() / "rice-profiles"
+    d = rice_dir() / "profiles"
     d.mkdir(parents=True, exist_ok=True)
     return d
 
