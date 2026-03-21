@@ -17,31 +17,36 @@ def reload_ghostty() -> tuple[bool, str]:
     return False, f"Unsupported platform: {system}"
 
 
-def _is_ghostty_running_macos() -> bool:
-    """Check if Ghostty is running on macOS."""
-    try:
-        result = subprocess.run(
-            ["pgrep", "-f", "Ghostty.app/Contents/MacOS/ghostty"],
-            capture_output=True,
-        )
-        return result.returncode == 0
-    except FileNotFoundError:
-        return False
-
-
 def _reload_macos() -> tuple[bool, str]:
-    """Reload Ghostty config on macOS via menu bar click."""
-    if not _is_ghostty_running_macos():
-        return False, "Ghostty is not running. Changes will apply on next launch."
-
+    """Reload Ghostty config on macOS via Ghostty's AppleScript API."""
     script = """
-        tell application "Ghostty" to activate
-        delay 0.3
-        tell application "System Events"
-            tell process "Ghostty"
-                click menu item "Reload Configuration" of menu "Ghostty" of menu bar 1
+        set ghostty_running to false
+        try
+            set ghostty_running to application id "com.mitchellh.ghostty" is running
+        end try
+        if not ghostty_running then
+            try
+                set ghostty_running to application "Ghostty" is running
+            end try
+        end if
+
+        if not ghostty_running then
+            error "ghostty_not_running" number 1001
+        end if
+
+        try
+            tell application id "com.mitchellh.ghostty"
+                activate
+                set t to focused terminal of selected tab of front window
+                perform action "reload_config" on t
             end tell
-        end tell
+        on error
+            tell application "Ghostty"
+                activate
+                set t to focused terminal of selected tab of front window
+                perform action "reload_config" on t
+            end tell
+        end try
     """
     try:
         result = subprocess.run(
@@ -52,9 +57,12 @@ def _reload_macos() -> tuple[bool, str]:
         )
         if result.returncode == 0:
             return True, "Config reloaded."
+        stderr = result.stderr.strip()
+        if "1001" in stderr or "ghostty_not_running" in stderr:
+            return False, "Ghostty is not running. Changes will apply on next launch."
         return False, (
             "Auto-reload failed. Press Cmd+Shift+, to reload manually.\n"
-            f"  Hint: {result.stderr.strip()}"
+            f"  Hint: {stderr}"
         )
     except subprocess.TimeoutExpired:
         return False, "Auto-reload timed out. Press Cmd+Shift+, to reload manually."
