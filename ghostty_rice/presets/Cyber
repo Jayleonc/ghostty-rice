@@ -1,8 +1,3 @@
-# @name: Cyber
-# @description: Cyberpunk vibes — high transparency, hidden chrome, holographic icon
-# @author: ghostty-rice
-# @tags: dark, cyberpunk, minimal, holographic
-
 theme = Catppuccin Macchiato
 background-opacity = 0.85
 background-blur = macos-glass-clear

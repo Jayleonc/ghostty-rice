@@ -17,37 +17,35 @@ pipx install ghostty-rice
 rice list
 
 # Switch profile (auto-reloads Ghostty)
-rice use catppuccin-mocha
+rice use "Catppuccin Mocha"
 
 # Preview before switching
-rice preview rosepine
+rice preview "Rose Pine"
 
 # Create your own
-rice create my-theme --from catppuccin-mocha
-# Edit ~/.config/ghostty/rice-profiles/my-theme.conf, then:
-rice use my-theme
+rice create "My Theme" --from "Catppuccin Mocha"
+# Edit the profile file, then:
+rice use "My Theme"
 ```
 
 ## Built-in Profiles
 
 | Profile | Description |
 |---------|-------------|
-| `catppuccin-mocha` | Warm and cozy — the most popular dev palette |
-| `rosepine` | Elegant dark with auto light/dark switching |
-| `cyber` | Cyberpunk vibes — high transparency, holographic icon |
-| `minimal` | Distraction-free — no titlebar, no blur, just code |
-| `frosted` | macOS native frosted glass (light mode) |
+| `Catppuccin Mocha` | Warm and cozy — the most popular dev palette |
+| `Rose Pine` | Elegant dark with auto light/dark switching |
+| `Cyber` | Cyberpunk vibes — high transparency, holographic icon |
+| `Minimal` | Distraction-free — no titlebar, no blur, just code |
+| `Frosted` | macOS native frosted glass (light mode) |
 
 ## Custom Profiles
 
-Create a `.conf` file in `~/.config/ghostty/rice-profiles/` (Linux) or `~/Library/Application Support/com.mitchellh.ghostty/rice-profiles/` (macOS):
+Profile files follow the same format as Ghostty's built-in themes — plain key=value config with no extension. Create a file in `rice-profiles/` under your Ghostty config directory:
+
+**macOS:** `~/Library/Application Support/com.mitchellh.ghostty/rice-profiles/`
+**Linux:** `~/.config/ghostty/rice-profiles/`
 
 ```ini
-# @name: My Theme
-# @description: My custom visual profile
-# @author: me
-# @tags: dark, custom
-
 theme = Catppuccin Mocha
 background-opacity = 0.90
 background-blur = macos-glass-regular
@@ -58,7 +56,16 @@ cursor-style = block
 cursor-style-blink = true
 ```
 
-Then `rice use my-theme` — that's it.
+Optionally add metadata in `manifest.toml` alongside your profiles:
+
+```toml
+[profiles."My Theme"]
+description = "My custom visual profile"
+author = "me"
+tags = ["dark", "custom"]
+```
+
+Then `rice use "My Theme"` — that's it.
 
 ## Why not just use a color theme?
 

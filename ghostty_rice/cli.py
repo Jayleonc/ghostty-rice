@@ -92,7 +92,7 @@ def preview_cmd(name: str) -> None:
 @click.option("--from", "from_profile", default=None, help="Base on an existing profile.")
 def create_cmd(name: str, from_profile: str | None) -> None:
     """Create a new profile."""
-    dest = user_profiles_dir() / f"{name}.conf"
+    dest = user_profiles_dir() / name
     if dest.exists():
         console.print(f"[red]Profile '{name}' already exists at {dest}[/red]")
         raise SystemExit(1)
@@ -104,15 +104,7 @@ def create_cmd(name: str, from_profile: str | None) -> None:
             raise SystemExit(1)
         shutil.copy2(source.path, dest)
     else:
-        dest.write_text(
-            f"# @name: {name}\n"
-            f"# @description: Custom profile\n"
-            f"# @author: me\n"
-            f"# @tags: custom\n"
-            f"\n"
-            f"theme = Catppuccin Mocha\n"
-            f"background-opacity = 0.95\n"
-        )
+        dest.write_text("theme = Catppuccin Mocha\nbackground-opacity = 0.95\n")
 
     console.print(f"[green]Created:[/green] {dest}")
     console.print(f"[dim]Edit it, then run: rice use {name}[/dim]")

@@ -5,53 +5,63 @@ from __future__ import annotations
 from pathlib import Path
 from textwrap import dedent
 
-from ghostty_rice.profile import Profile, _extract_base_config
+from ghostty_rice.profile import _extract_base_config, _scan_profiles
 
 
-def test_profile_from_file(tmp_path: Path) -> None:
-    conf = tmp_path / "test.conf"
-    conf.write_text(
+def test_scan_profiles_from_directory(tmp_path: Path) -> None:
+    # Create profile files (no extension, Ghostty-style)
+    (tmp_path / "My Theme").write_text("theme = Catppuccin Mocha\nbackground-opacity = 0.9\n")
+    (tmp_path / "Other").write_text("theme = Rose Pine\n")
+
+    # Create manifest
+    (tmp_path / "manifest.toml").write_text(
         dedent("""\
-        # @name: Test Theme
-        # @description: A test profile
-        # @author: tester
-        # @tags: dark, test
-        theme = Catppuccin Mocha
-        background-opacity = 0.9
+        [profiles."My Theme"]
+        description = "A test profile"
+        author = "tester"
+        tags = ["dark", "test"]
+
+        [profiles."Other"]
+        description = "Another profile"
+        author = "tester"
+        tags = ["dark"]
     """)
     )
 
-    p = Profile.from_file(conf, source="builtin")
-    assert p.name == "test"
-    assert p.description == "A test profile"
-    assert p.author == "tester"
-    assert p.tags == ["dark", "test"]
-    assert "theme = Catppuccin Mocha" in p.config_body()
+    profiles = _scan_profiles(tmp_path, source="builtin")
+    assert len(profiles) == 2
+
+    my_theme = next(p for p in profiles if p.name == "My Theme")
+    assert my_theme.description == "A test profile"
+    assert my_theme.author == "tester"
+    assert my_theme.tags == ["dark", "test"]
+    assert "theme = Catppuccin Mocha" in my_theme.config_body()
 
 
-def test_profile_config_body_excludes_header(tmp_path: Path) -> None:
-    conf = tmp_path / "example.conf"
-    conf.write_text(
-        dedent("""\
-        # @name: Example
-        # @description: Example profile
-        theme = Rose Pine
-        cursor-style = bar
-    """)
-    )
+def test_scan_profiles_without_manifest(tmp_path: Path) -> None:
+    (tmp_path / "Bare Theme").write_text("theme = Catppuccin Mocha\n")
 
-    p = Profile.from_file(conf, source="user")
-    body = p.config_body()
-    assert "# @name" not in body
-    assert "theme = Rose Pine" in body
-    assert "cursor-style = bar" in body
+    profiles = _scan_profiles(tmp_path, source="user")
+    assert len(profiles) == 1
+    assert profiles[0].name == "Bare Theme"
+    assert profiles[0].description == ""
+
+
+def test_scan_profiles_skips_dotfiles_and_extensions(tmp_path: Path) -> None:
+    (tmp_path / "Valid Theme").write_text("theme = Rose Pine\n")
+    (tmp_path / ".hidden").write_text("should skip\n")
+    (tmp_path / "manifest.toml").write_text("[profiles]\n")
+    (tmp_path / "__pycache__").mkdir()
+
+    profiles = _scan_profiles(tmp_path, source="builtin")
+    assert len(profiles) == 1
+    assert profiles[0].name == "Valid Theme"
 
 
 def test_extract_base_config() -> None:
     text = dedent("""\
         # rice-profile: test
         # Managed by ghostty-rice
-        # Do not edit the profile section below manually
 
         shell-integration = detect
         font-family = "JetBrains Mono"

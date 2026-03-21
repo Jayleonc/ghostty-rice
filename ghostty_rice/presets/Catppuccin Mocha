@@ -1,8 +1,3 @@
-# @name: Catppuccin Mocha
-# @description: Warm and cozy — the most popular dev palette
-# @author: ghostty-rice
-# @tags: dark, warm, popular
-
 theme = Catppuccin Mocha
 background-opacity = 0.92
 background-blur = macos-glass-regular

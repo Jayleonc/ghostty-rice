@@ -18,6 +18,7 @@ def test_cli_list() -> None:
     runner = CliRunner()
     result = runner.invoke(cli, ["list"])
     assert result.exit_code == 0
-    assert "catppuccin-mocha" in result.output
-    assert "rosepine" in result.output
-    assert "cyber" in result.output
+    # Ghostty-style names (no extension)
+    assert "Catppuccin Mocha" in result.output
+    assert "Rose Pine" in result.output
+    assert "Cyber" in result.output

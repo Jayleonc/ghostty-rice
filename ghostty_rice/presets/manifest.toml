@@ -1,0 +1,24 @@
+[profiles."Catppuccin Mocha"]
+description = "Warm and cozy — the most popular dev palette"
+author = "ghostty-rice"
+tags = ["dark", "warm", "popular"]
+
+[profiles."Rose Pine"]
+description = "Elegant dark with auto light/dark switching"
+author = "ghostty-rice"
+tags = ["dark", "light", "elegant", "auto-switch"]
+
+[profiles."Cyber"]
+description = "Cyberpunk vibes — high transparency, holographic icon"
+author = "ghostty-rice"
+tags = ["dark", "cyberpunk", "minimal", "holographic"]
+
+[profiles."Minimal"]
+description = "Clean and distraction-free — no titlebar, no blur, just code"
+author = "ghostty-rice"
+tags = ["dark", "minimal", "clean"]
+
+[profiles."Frosted"]
+description = "macOS native frosted glass with Catppuccin Latte"
+author = "ghostty-rice"
+tags = ["light", "glass", "macos", "native"]
