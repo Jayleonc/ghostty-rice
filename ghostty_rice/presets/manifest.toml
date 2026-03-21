@@ -1,12 +1,7 @@
 [profiles."Catppuccin Mocha"]
-description = "Late-night café warmth — near-opaque, steady bar cursor, Wong Kar-wai intimacy"
+description = "Late-night café warmth — fully opaque, steady bar cursor, Wong Kar-wai intimacy"
 author = "ghostty-rice"
 tags = ["dark", "warm", "readable", "cozy"]
-
-[profiles."Rose Pine"]
-description = "Botanical studio at golden hour — generous spacing, soft light, auto light/dark"
-author = "ghostty-rice"
-tags = ["dark", "light", "elegant", "auto-switch", "spacious"]
 
 [profiles."Cyber"]
 description = "Blade Runner HUD — translucent glass on neon wallpapers, hidden chrome"
@@ -24,14 +19,9 @@ author = "ghostty-rice"
 tags = ["dark", "minimal", "distraction-free", "opaque"]
 
 [profiles."Nord"]
-description = "Scandinavian clarity — cool precision, no-fidget cursor, Arrival-grade calm"
+description = "Scandinavian clarity — fully opaque cool precision, Arrival-grade calm"
 author = "ghostty-rice"
 tags = ["dark", "cool", "arctic", "professional", "focused"]
-
-[profiles."Tokyo Night"]
-description = "Lost in Translation — deep navy, neon accents, 3 AM in Shinjuku"
-author = "ghostty-rice"
-tags = ["dark", "blue", "cinematic", "modern", "night"]
 
 [profiles."Gruvbox"]
 description = "Analog warmth — fully opaque, earth tones, Wes Anderson palette"
@@ -39,11 +29,11 @@ author = "ghostty-rice"
 tags = ["dark", "warm", "retro", "opaque", "earthy"]
 
 [profiles."Dracula"]
-description = "Gothic cinema — theatrical purple-grey, bold accents, Tim Burton drama"
+description = "Gothic cinema — fully opaque purple-grey, bold accents, Tim Burton drama"
 author = "ghostty-rice"
 tags = ["dark", "purple", "vibrant", "dramatic", "cinematic"]
 
-[profiles."Solarized"]
-description = "The architect's desk — scientific precision, near-solid, auto light/dark"
+[profiles."One Dark Pro"]
+description = "Studio baseline — high-adoption One Dark family, stable contrast, low-flicker focus"
 author = "ghostty-rice"
-tags = ["dark", "light", "scientific", "auto-switch", "precise"]
+tags = ["dark", "popular", "balanced", "professional", "readable"]

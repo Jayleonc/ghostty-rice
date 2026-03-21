@@ -33,17 +33,17 @@
 <summary><b>方案画廊</b>（点击展开）</summary>
 <br>
 
-| Catppuccin Mocha | Rose Pine | Cyber |
+| Catppuccin Mocha | One Dark Pro | Cyber |
 |:---:|:---:|:---:|
-| <img src="docs/screenshots/catppuccin-mocha.png" width="280"> | <img src="docs/screenshots/rose-pine.png" width="280"> | <img src="docs/screenshots/cyber.png" width="280"> |
+| <img src="docs/screenshots/catppuccin-mocha.png" width="280"> | <img src="docs/screenshots/one-dark-pro.png" width="280"> | <img src="docs/screenshots/cyber.png" width="280"> |
 
-| Nord | Tokyo Night | Dracula |
+| Nord | Dracula | Frosted |
 |:---:|:---:|:---:|
-| <img src="docs/screenshots/nord.png" width="280"> | <img src="docs/screenshots/tokyo-night.png" width="280"> | <img src="docs/screenshots/dracula.png" width="280"> |
+| <img src="docs/screenshots/nord.png" width="280"> | <img src="docs/screenshots/dracula.png" width="280"> | <img src="docs/screenshots/frosted.png" width="280"> |
 
-| Gruvbox | Solarized | Frosted |
+| Gruvbox | | |
 |:---:|:---:|:---:|
-| <img src="docs/screenshots/gruvbox.png" width="280"> | <img src="docs/screenshots/solarized.png" width="280"> | <img src="docs/screenshots/frosted.png" width="280"> |
+| <img src="docs/screenshots/gruvbox.png" width="280"> | | |
 
 | Minimal | | |
 |:---:|:---:|:---:|
@@ -107,6 +107,9 @@ rice use "Catppuccin Mocha"
 # 交互式切换（方向键 + 回车）
 rice switch
 
+# 交互式字体工作台（实时预览）
+rice font
+
 # 预览方案（不切换）
 rice preview "Cyber"
 
@@ -117,20 +120,18 @@ rice doctor
 rice current
 ```
 
-## 内置方案 (10)
+## 内置方案 (8)
 
 | 方案 | 风格 |
 |------|------|
 | **Catppuccin Mocha** | 温暖柔和，程序员圈最火的配色 |
-| **Rose Pine** | 优雅暗色，跟随系统自动切换明暗 |
+| **One Dark Pro** | 高使用率的稳定暗色基线，阅读压力低 |
 | **Cyber** | 赛博朋克 —— 高透明度、隐藏标题栏、全息图标 |
 | **Minimal** | 极简 —— 无标题栏、无模糊、只有代码 |
 | **Frosted** | macOS 原生毛玻璃，亮色模式 |
 | **Nord** | 北极冰蓝，冷静专注 |
-| **Tokyo Night** | 东京夜色，现代深蓝暗色主题 |
 | **Gruvbox** | 复古暖调，Vim 用户最爱 |
 | **Dracula** | 经典暗色，标志性紫粉配色 |
-| **Solarized** | 科学配色，支持自动明暗切换 |
 
 ## 自定义方案
 

@@ -4,9 +4,15 @@ from __future__ import annotations
 
 from pathlib import Path
 from textwrap import dedent
+from unittest.mock import patch
 
 from ghostty_rice.paths import bundled_presets_dir
-from ghostty_rice.profile import _extract_base_config, _scan_profiles
+from ghostty_rice.profile import (
+    _extract_base_config,
+    _scan_profiles,
+    _upsert_base_settings,
+    update_base_settings,
+)
 
 
 def test_scan_profiles_from_directory(tmp_path: Path) -> None:
@@ -79,8 +85,58 @@ def test_extract_base_config() -> None:
 
 
 def test_critical_builtin_theme_names_match_ghostty() -> None:
-    tokyo = (bundled_presets_dir() / "Tokyo Night").read_text()
-    solarized = (bundled_presets_dir() / "Solarized").read_text()
+    catppuccin = (bundled_presets_dir() / "Catppuccin Mocha").read_text()
+    one_dark = (bundled_presets_dir() / "One Dark Pro").read_text()
 
-    assert "theme = TokyoNight" in tokyo
-    assert "theme = light:iTerm2 Solarized Light,dark:iTerm2 Solarized Dark" in solarized
+    assert "theme = Catppuccin Mocha" in catppuccin
+    assert "theme = Atom One Dark" in one_dark
+
+
+def test_upsert_base_settings_replaces_existing_keys() -> None:
+    base = dedent("""\
+        shell-integration = detect
+        font-family = "Old Font"
+        font-size = 12
+    """)
+    updated = _upsert_base_settings(
+        base,
+        {"font-family": '"JetBrains Mono"', "font-size": "13"},
+    )
+    assert 'font-family = "Old Font"' not in updated
+    assert "font-size = 12" not in updated
+    assert 'font-family = "JetBrains Mono"' in updated
+    assert "font-size = 13" in updated
+
+
+def test_update_base_settings_preserves_active_profile(tmp_path: Path) -> None:
+    config_path = tmp_path / "config"
+    config_path.write_text(
+        dedent("""\
+            # rice-profile: Demo
+            # Managed by ghostty-rice — https://github.com/jayleonc/ghostty-rice
+
+            shell-integration = detect
+
+            # --- Profile: Demo ---
+            theme = Catppuccin Mocha
+        """)
+    )
+    demo_profile = Path(tmp_path / "Demo")
+    demo_profile.write_text("theme = Catppuccin Mocha\n")
+
+    class _DemoProfile:
+        name = "Demo"
+
+        def config_body(self) -> str:
+            return "theme = Catppuccin Mocha"
+
+    with (
+        patch("ghostty_rice.profile.ghostty_config_file", return_value=config_path),
+        patch("ghostty_rice.profile.get_current_profile", return_value="Demo"),
+        patch("ghostty_rice.profile.get_profile", return_value=_DemoProfile()),
+    ):
+        update_base_settings({"font-size": "13"})
+
+    written = config_path.read_text()
+    assert "font-size = 13" in written
+    assert "# --- Profile: Demo ---" in written

@@ -16,6 +16,7 @@ else:
 
 _CURRENT_RE = re.compile(r"^#\s*rice-profile:\s*(.+)$")
 _PROFILE_SECTION_RE = re.compile(r"^#\s*---\s*Profile:.*---\s*$")
+_SETTING_KEY_RE = re.compile(r"^\s*([a-zA-Z0-9-]+)\s*=")
 
 
 @dataclass
@@ -149,3 +150,47 @@ def _extract_base_config(text: str) -> str:
             break
         base_lines.append(line)
     return "\n".join(base_lines)
+
+
+def _upsert_base_settings(base_text: str, settings: dict[str, str]) -> str:
+    """Return base config text with setting keys replaced by `settings`."""
+    keys = set(settings.keys())
+    lines: list[str] = []
+    for line in base_text.splitlines():
+        m = _SETTING_KEY_RE.match(line)
+        if m and m.group(1) in keys:
+            continue
+        lines.append(line)
+
+    while lines and not lines[-1].strip():
+        lines.pop()
+    if lines:
+        lines.append("")
+
+    for key, value in settings.items():
+        lines.append(f"{key} = {value}")
+
+    return "\n".join(lines)
+
+
+def update_base_settings(settings: dict[str, str]) -> None:
+    """Update base (non-profile) config settings and preserve active profile."""
+    config_path = ghostty_config_file()
+    existing = config_path.read_text() if config_path.exists() else ""
+    base = _extract_base_config(existing) if existing else ""
+    updated_base = _upsert_base_settings(base, settings)
+
+    current_name = get_current_profile()
+    current_profile = get_profile(current_name) if current_name else None
+
+    if current_profile:
+        content = _HEADER.format(name=current_profile.name)
+        if updated_base.strip():
+            content += updated_base.strip() + "\n\n"
+        content += f"# --- Profile: {current_profile.name} ---\n"
+        content += current_profile.config_body() + "\n"
+    else:
+        content = updated_base.strip() + ("\n" if updated_base.strip() else "")
+
+    config_path.parent.mkdir(parents=True, exist_ok=True)
+    config_path.write_text(content)

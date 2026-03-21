@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import shutil
+import time
 from collections.abc import Callable
 
 import click
@@ -11,6 +12,7 @@ from rich.table import Table
 
 from ghostty_rice import __version__
 from ghostty_rice.colors import show_all_colors, show_profile_colors
+from ghostty_rice.fonts import FontPreset, apply_font_preset, current_font_family, list_font_presets
 from ghostty_rice.paths import ghostty_config_dir, ghostty_config_file, user_profiles_dir
 from ghostty_rice.platform import get_platform
 from ghostty_rice.preview import preview_profile
@@ -24,6 +26,7 @@ from ghostty_rice.profile import (
 from ghostty_rice.reload import reload_ghostty
 
 console = Console()
+_PREVIEW_MIN_INTERVAL = 0.12
 
 
 def _render_switch_table(
@@ -128,6 +131,115 @@ def _choose_profile_interactively(
             return None
 
 
+def _render_font_table(
+    presets: list[FontPreset],
+    current_index: int,
+    current_family: str | None,
+    status_ok: bool,
+    status_message: str | None,
+) -> None:
+    """Render interactive font switcher table."""
+    table = Table(
+        title="Interactive Font Switcher",
+        border_style="bright_blue",
+        show_lines=False,
+    )
+    table.add_column("", width=2)
+    table.add_column("#", style="dim", width=4)
+    table.add_column("Preset", style="bold")
+    table.add_column("Font Family")
+    table.add_column("Size", width=6)
+    table.add_column("Description")
+
+    for idx, preset in enumerate(presets):
+        family = preset.settings.get("font-family", "").strip('"')
+        marker = "➤" if idx == current_index else ("•" if family == current_family else " ")
+        table.add_row(
+            marker,
+            str(idx + 1),
+            preset.name,
+            family,
+            preset.settings.get("font-size", "-"),
+            preset.description,
+        )
+
+    console.print(table)
+    console.print(
+        "[dim]Controls: ↑/↓ or j/k to move (live preview), Enter to confirm, q to cancel[/dim]"
+    )
+    if status_message:
+        style = "green" if status_ok else "yellow"
+        console.print(f"[{style}]{status_message}[/{style}]")
+
+
+def _choose_font_interactively(
+    presets: list[FontPreset],
+    current_family: str | None,
+    on_preview: Callable[[FontPreset], tuple[bool, str]] | None = None,
+) -> FontPreset | None:
+    """Return a user-selected font preset via keyboard-driven interactive UI."""
+    if not presets:
+        return None
+
+    if current_family:
+        current_index = next(
+            (
+                idx
+                for idx, preset in enumerate(presets)
+                if preset.settings.get("font-family", "").strip('"') == current_family
+            ),
+            0,
+        )
+    else:
+        current_index = 0
+
+    status_ok = True
+    status_message: str | None = None
+    while True:
+        console.clear()
+        _render_font_table(
+            presets,
+            current_index,
+            current_family,
+            status_ok=status_ok,
+            status_message=status_message,
+        )
+        action = _read_switch_action()
+        if action == "up":
+            current_index = (current_index - 1) % len(presets)
+            if on_preview:
+                status_ok, status_message = on_preview(presets[current_index])
+        elif action == "down":
+            current_index = (current_index + 1) % len(presets)
+            if on_preview:
+                status_ok, status_message = on_preview(presets[current_index])
+        elif action == "apply":
+            console.clear()
+            return presets[current_index]
+        elif action == "cancel":
+            console.clear()
+            return None
+
+
+def _capture_config_snapshot() -> tuple[bool, str]:
+    """Capture current config content for cancel/rollback flows."""
+    config_path = ghostty_config_file()
+    if config_path.exists():
+        return True, config_path.read_text()
+    return False, ""
+
+
+def _restore_config_snapshot(existed: bool, content: str) -> None:
+    """Restore config content from snapshot."""
+    config_path = ghostty_config_file()
+    if existed:
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        config_path.write_text(content)
+        return
+    if config_path.exists():
+        config_path.unlink()
+
+
 @click.group(invoke_without_command=True)
 @click.version_option(__version__, prog_name="ghostty-rice")
 @click.pass_context
@@ -190,17 +302,28 @@ def switch_cmd(no_reload: bool) -> None:
         console.print("[yellow]No profiles found.[/yellow]")
         return
 
+    snapshot_existed, snapshot_content = _capture_config_snapshot()
     current = get_current_profile()
-    current_profile = get_profile(current) if current else None
     previewed_name = current
+    preview_reload_pending = False
+    last_preview_reload = 0.0
 
     def _preview(profile: Profile) -> tuple[bool, str]:
-        nonlocal previewed_name
+        nonlocal previewed_name, preview_reload_pending, last_preview_reload
+        if previewed_name == profile.name:
+            return True, f"Previewing: {profile.name}"
+
         apply_profile(profile)
         previewed_name = profile.name
         if no_reload:
             return True, f"Previewing: {profile.name}"
+        now = time.monotonic()
+        if now - last_preview_reload < _PREVIEW_MIN_INTERVAL:
+            preview_reload_pending = True
+            return True, f"Previewing {profile.name}: queued for fast apply"
         ok, msg = reload_ghostty()
+        last_preview_reload = now
+        preview_reload_pending = False
         return ok, f"Previewing {profile.name}: {msg}"
 
     selected = _choose_profile_interactively(
@@ -209,11 +332,9 @@ def switch_cmd(no_reload: bool) -> None:
         on_preview=_preview,
     )
     if not selected:
-        if previewed_name != current and current_profile:
-            apply_profile(current_profile)
-            console.print(
-                f"[yellow]Cancelled.[/yellow] Reverted to: [bold]{current_profile.name}[/bold]"
-            )
+        if previewed_name != current:
+            _restore_config_snapshot(snapshot_existed, snapshot_content)
+            console.print("[yellow]Cancelled.[/yellow] Restored previous config.")
             if not no_reload:
                 ok, msg = reload_ghostty()
                 style = "green" if ok else "yellow"
@@ -227,7 +348,70 @@ def switch_cmd(no_reload: bool) -> None:
     console.print(f"[green]Switched to:[/green] [bold]{selected.name}[/bold]")
 
     if not no_reload:
-        if previewed_name == selected.name:
+        if previewed_name == selected.name and not preview_reload_pending:
+            console.print("[green]Preview already active.[/green]")
+        else:
+            ok, msg = reload_ghostty()
+            style = "green" if ok else "yellow"
+            console.print(f"[{style}]{msg}[/{style}]")
+
+
+@cli.command("font")
+@click.option("--no-reload", is_flag=True, help="Don't auto-reload Ghostty config.")
+def font_cmd(no_reload: bool) -> None:
+    """Interactive font preset picker with immediate preview."""
+    presets = list_font_presets()
+    if not presets:
+        console.print("[yellow]No font presets available.[/yellow]")
+        return
+
+    snapshot_existed, snapshot_content = _capture_config_snapshot()
+    current_family = current_font_family()
+    previewed_name: str | None = None
+    preview_reload_pending = False
+    last_preview_reload = 0.0
+
+    def _preview(preset: FontPreset) -> tuple[bool, str]:
+        nonlocal previewed_name, preview_reload_pending, last_preview_reload
+        if previewed_name == preset.name:
+            return True, f"Previewing font: {preset.name}"
+
+        apply_font_preset(preset)
+        previewed_name = preset.name
+        if no_reload:
+            return True, f"Previewing font: {preset.name}"
+        now = time.monotonic()
+        if now - last_preview_reload < _PREVIEW_MIN_INTERVAL:
+            preview_reload_pending = True
+            return True, f"Previewing {preset.name}: queued for fast apply"
+        ok, msg = reload_ghostty()
+        last_preview_reload = now
+        preview_reload_pending = False
+        return ok, f"Previewing {preset.name}: {msg}"
+
+    selected = _choose_font_interactively(
+        presets,
+        current_family=current_family,
+        on_preview=_preview,
+    )
+    if not selected:
+        if previewed_name is not None:
+            _restore_config_snapshot(snapshot_existed, snapshot_content)
+            console.print("[yellow]Cancelled.[/yellow] Restored previous font config.")
+            if not no_reload:
+                ok, msg = reload_ghostty()
+                style = "green" if ok else "yellow"
+                console.print(f"[{style}]{msg}[/{style}]")
+            return
+        console.print("[yellow]Cancelled.[/yellow]")
+        return
+
+    if previewed_name != selected.name:
+        apply_font_preset(selected)
+
+    console.print(f"[green]Font preset:[/green] [bold]{selected.name}[/bold]")
+    if not no_reload:
+        if previewed_name == selected.name and not preview_reload_pending:
             console.print("[green]Preview already active.[/green]")
         else:
             ok, msg = reload_ghostty()
@@ -269,7 +453,7 @@ def create_cmd(name: str, from_profile: str | None) -> None:
             raise SystemExit(1)
         shutil.copy2(source.path, dest)
     else:
-        dest.write_text("theme = Catppuccin Mocha\nbackground-opacity = 0.95\n")
+        dest.write_text("theme = Catppuccin Mocha\nbackground-opacity = 1.0\n")
 
     console.print(f"[green]Created:[/green] {dest}")
     console.print(f"[dim]Edit it, then run: rice use {name}[/dim]")

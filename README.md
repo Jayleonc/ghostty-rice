@@ -33,17 +33,17 @@
 <summary><b>Profile Gallery</b> (click to expand)</summary>
 <br>
 
-| Catppuccin Mocha | Rose Pine | Cyber |
+| Catppuccin Mocha | One Dark Pro | Cyber |
 |:---:|:---:|:---:|
-| <img src="docs/screenshots/catppuccin-mocha.png" width="280"> | <img src="docs/screenshots/rose-pine.png" width="280"> | <img src="docs/screenshots/cyber.png" width="280"> |
+| <img src="docs/screenshots/catppuccin-mocha.png" width="280"> | <img src="docs/screenshots/one-dark-pro.png" width="280"> | <img src="docs/screenshots/cyber.png" width="280"> |
 
-| Nord | Tokyo Night | Dracula |
+| Nord | Dracula | Frosted |
 |:---:|:---:|:---:|
-| <img src="docs/screenshots/nord.png" width="280"> | <img src="docs/screenshots/tokyo-night.png" width="280"> | <img src="docs/screenshots/dracula.png" width="280"> |
+| <img src="docs/screenshots/nord.png" width="280"> | <img src="docs/screenshots/dracula.png" width="280"> | <img src="docs/screenshots/frosted.png" width="280"> |
 
-| Gruvbox | Solarized | Frosted |
+| Gruvbox | | |
 |:---:|:---:|:---:|
-| <img src="docs/screenshots/gruvbox.png" width="280"> | <img src="docs/screenshots/solarized.png" width="280"> | <img src="docs/screenshots/frosted.png" width="280"> |
+| <img src="docs/screenshots/gruvbox.png" width="280"> | | |
 
 | Minimal | | |
 |:---:|:---:|:---:|
@@ -105,6 +105,9 @@ rice use "Catppuccin Mocha"
 # Interactive switcher (arrow keys + Enter)
 rice switch
 
+# Interactive font studio (live preview)
+rice font
+
 # Preview without switching
 rice preview "Cyber"
 
@@ -115,20 +118,18 @@ rice doctor
 rice current
 ```
 
-## Built-in Profiles (10)
+## Built-in Profiles (8)
 
 | Profile | Style |
 |---------|-------|
 | **Catppuccin Mocha** | Warm, cozy, the most popular dev palette |
-| **Rose Pine** | Elegant dark with auto light/dark switching |
+| **One Dark Pro** | High-adoption baseline with balanced contrast |
 | **Cyber** | High transparency, hidden chrome, holographic icon |
 | **Minimal** | No chrome, no blur, just code |
 | **Frosted** | macOS native frosted glass, light mode |
 | **Nord** | Arctic, north-bluish palette — calm and focused |
-| **Tokyo Night** | Clean dark theme celebrating city lights |
 | **Gruvbox** | Retro groove with warm, earthy tones |
 | **Dracula** | Iconic dark theme with vibrant purple and pink |
-| **Solarized** | Scientific palette with auto light/dark switching |
 
 ## Custom Profiles
 

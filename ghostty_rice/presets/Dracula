@@ -28,8 +28,7 @@ theme = Dracula
 # --- Window ---
 # Dracula's purple-grey base is distinctive — protect it.
 # A subtle glass hint adds depth to the purple undertone.
-background-opacity = 0.95
-background-blur = macos-glass-regular
+background-opacity = 1.0
 window-padding-x = 16
 window-padding-y = 12
 window-padding-color = extend

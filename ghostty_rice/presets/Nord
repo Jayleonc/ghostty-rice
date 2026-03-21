@@ -25,8 +25,7 @@ theme = Nord
 # --- Window ---
 # Nord's colors are scientifically placed on the CIELAB space.
 # Transparency would shift those relationships. Keep it solid.
-background-opacity = 0.96
-background-blur = macos-glass-regular
+background-opacity = 1.0
 window-padding-x = 14
 window-padding-y = 10
 window-padding-color = extend

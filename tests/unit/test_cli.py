@@ -8,6 +8,7 @@ from unittest.mock import patch
 from click.testing import CliRunner
 
 from ghostty_rice.cli import _choose_profile_interactively, _read_switch_action, cli
+from ghostty_rice.fonts import FontPreset
 from ghostty_rice.profile import Profile
 
 
@@ -24,7 +25,7 @@ def test_cli_list() -> None:
     assert result.exit_code == 0
     # Ghostty-style names (no extension)
     assert "Catppuccin Mocha" in result.output
-    assert "Rose Pine" in result.output
+    assert "One Dark Pro" in result.output
     assert "Cyber" in result.output
 
 
@@ -106,6 +107,7 @@ def test_cli_switch_command() -> None:
         patch("ghostty_rice.cli.list_profiles", return_value=[current, selected]),
         patch("ghostty_rice.cli.get_current_profile", return_value="Rose Pine"),
         patch("ghostty_rice.cli.get_profile", return_value=current),
+        patch("ghostty_rice.cli._capture_config_snapshot", return_value=(True, "orig")),
         patch("ghostty_rice.cli._choose_profile_interactively", return_value=selected),
         patch("ghostty_rice.cli.apply_profile") as mock_apply,
         patch("ghostty_rice.cli.reload_ghostty", return_value=(True, "Config reloaded.")),
@@ -150,6 +152,8 @@ def test_cli_switch_cancel_reverts_previewed_profile() -> None:
         patch("ghostty_rice.cli.list_profiles", return_value=[current, preview]),
         patch("ghostty_rice.cli.get_current_profile", return_value="Rose Pine"),
         patch("ghostty_rice.cli.get_profile", return_value=current),
+        patch("ghostty_rice.cli._capture_config_snapshot", return_value=(True, "orig")),
+        patch("ghostty_rice.cli._restore_config_snapshot") as mock_restore,
         patch("ghostty_rice.cli._choose_profile_interactively", side_effect=_choose_side_effect),
         patch("ghostty_rice.cli.apply_profile") as mock_apply,
         patch("ghostty_rice.cli.reload_ghostty", return_value=(True, "Config reloaded.")),
@@ -157,8 +161,32 @@ def test_cli_switch_cancel_reverts_previewed_profile() -> None:
         result = runner.invoke(cli, ["switch"])
 
     assert result.exit_code == 0
-    assert mock_apply.call_count == 2
+    assert mock_apply.call_count == 1
     assert mock_apply.call_args_list[0].args[0] == preview
-    assert mock_apply.call_args_list[1].args[0] == current
+    mock_restore.assert_called_once_with(True, "orig")
     assert "Cancelled." in result.output
-    assert "Reverted to:" in result.output
+    assert "Restored previous config." in result.output
+
+
+def test_cli_font_command() -> None:
+    runner = CliRunner()
+    selected = FontPreset(
+        name="JetBrains Mono",
+        description="desc",
+        settings={"font-family": '"JetBrains Mono"', "font-size": "13"},
+    )
+    with (
+        patch("ghostty_rice.cli.list_font_presets", return_value=[selected]),
+        patch("ghostty_rice.cli.current_font_family", return_value="Fira Code"),
+        patch("ghostty_rice.cli._capture_config_snapshot", return_value=(True, "orig")),
+        patch("ghostty_rice.cli._choose_font_interactively", return_value=selected),
+        patch("ghostty_rice.cli.apply_font_preset") as mock_apply,
+        patch("ghostty_rice.cli.reload_ghostty", return_value=(True, "Config reloaded.")),
+    ):
+        result = runner.invoke(cli, ["font"])
+
+    assert result.exit_code == 0
+    mock_apply.assert_called_once_with(selected)
+    assert "Font preset:" in result.output
+    assert "JetBrains Mono" in result.output
+    assert "Config reloaded." in result.output
