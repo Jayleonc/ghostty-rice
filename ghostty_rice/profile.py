@@ -12,7 +12,7 @@ from ghostty_rice.paths import bundled_presets_dir, ghostty_config_file, user_pr
 if sys.version_info >= (3, 11):
     import tomllib
 else:
-    import tomli as tomllib
+    import tomli as tomllib  # type: ignore[import-not-found]
 
 _CURRENT_RE = re.compile(r"^#\s*rice-profile:\s*(.+)$")
 _PROFILE_SECTION_RE = re.compile(r"^#\s*---\s*Profile:.*---\s*$")
