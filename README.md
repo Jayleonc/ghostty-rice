@@ -8,7 +8,7 @@
     <a href="https://github.com/jayleonc/ghostty-rice/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jayleonc/ghostty-rice?style=flat-square" alt="License"></a>
     <a href="https://github.com/jayleonc/ghostty-rice/actions"><img src="https://img.shields.io/github/actions/workflow/status/jayleonc/ghostty-rice/ci.yml?style=flat-square&label=CI" alt="CI"></a>
     <img src="https://img.shields.io/pypi/pyversions/ghostty-rice?style=flat-square" alt="Python">
-    <a href="./README_CN.md"><img src="https://img.shields.io/badge/lang-简体中文-red?style=flat-square" alt="中文"></a>
+    <a href="./README_ZH.md"><img src="https://img.shields.io/badge/lang-简体中文-red?style=flat-square" alt="中文"></a>
   </p>
 </p>
 
