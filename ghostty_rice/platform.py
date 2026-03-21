@@ -124,14 +124,48 @@ class MacOSPlatform(GhosttyPlatform):
         return Path(self._GHOSTTY_APP).exists()
 
     def is_ghostty_running(self) -> bool:
+        script = """
+            set ghostty_running to false
+            try
+                set ghostty_running to application id "com.mitchellh.ghostty" is running
+            end try
+            if not ghostty_running then
+                try
+                    set ghostty_running to application "Ghostty" is running
+                end try
+            end if
+            if ghostty_running then
+                return "true"
+            else
+                return "false"
+            end if
+        """
         try:
             result = subprocess.run(
-                ["pgrep", "-f", "Ghostty.app/Contents/MacOS/ghostty"],
+                ["osascript", "-e", script],
                 capture_output=True,
+                text=True,
+                timeout=3,
             )
-            return result.returncode == 0
-        except FileNotFoundError:
-            return False
+            if result.returncode == 0:
+                return result.stdout.strip().lower() == "true"
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            pass
+
+        probes = [
+            ["pgrep", "-x", "ghostty"],
+            ["pgrep", "-x", "Ghostty"],
+            ["pgrep", "-f", "Ghostty.app/Contents/MacOS/ghostty"],
+            ["pgrep", "-f", "Ghostty.app/Contents/MacOS/Ghostty"],
+        ]
+        for probe in probes:
+            try:
+                result = subprocess.run(probe, capture_output=True)
+            except FileNotFoundError:
+                return False
+            if result.returncode == 0:
+                return True
+        return False
 
     def ghostty_version(self) -> str | None:
         try:
@@ -207,17 +241,24 @@ class MacOSPlatform(GhosttyPlatform):
                 timeout=5,
             )
             output = result.stdout.strip()
-            if output == "ok" or result.returncode == 0:
+            if output == "ok":
                 return DiagnosticCheck(
                     name="Automation permission",
                     passed=True,
                     message="Granted",
                 )
+            if output.startswith("error:"):
+                return DiagnosticCheck(
+                    name="Automation permission",
+                    passed=False,
+                    message="Not granted",
+                    hint="Allow in System Settings > Privacy & Security > Automation",
+                )
             return DiagnosticCheck(
                 name="Automation permission",
                 passed=False,
-                message="Not granted",
-                hint="Allow in System Settings > Privacy & Security > Automation",
+                message="Could not verify",
+                hint="Run `rice use <profile>` once to trigger the permission prompt",
             )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return DiagnosticCheck(

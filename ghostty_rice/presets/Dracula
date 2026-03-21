@@ -1,11 +1,24 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Dracula — A dark theme for vampires and developers         ║
+# ║  Dracula — Gothic Cinema                                     ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# The iconic dark theme with vibrant purple, pink, and cyan accents.
-# Dracula has become one of the most ported themes in the developer
-# ecosystem — its high-contrast palette makes code pop while the dark
-# purple-grey background remains easy on the eyes at night.
+# Design philosophy: A Hammer Horror film meets modern design.
+#
+# Dracula is the most dramatic mainstream palette. Its signature
+# purple-grey base (#282a36) creates a unique mid-dark tone that
+# no other theme occupies — darker than Solarized, warmer than
+# Nord, more saturated than Catppuccin. The vibrant pink (#ff79c6),
+# cyan (#8be9fd), and green (#50fa7b) accents are deliberately
+# theatrical.
+#
+# Color psychology: Purple has the shortest wavelength visible
+# to the human eye, creating a sense of depth and richness that
+# other base colors can't match. The high-saturation accents on
+# a muted base create a "spotlight" effect — important code
+# elements demand attention while the background recedes.
+#
+# Visual reference: Tim Burton's entire filmography — the contrast
+# between dark, moody environments and vivid, almost surreal details.
 #
 # Best paired with: Fira Code, Cascadia Code PL, or Monaspace Radon
 
@@ -13,10 +26,12 @@
 theme = Dracula
 
 # --- Window ---
-background-opacity = 0.90
+# Dracula's purple-grey base is distinctive — protect it.
+# A subtle glass hint adds depth to the purple undertone.
+background-opacity = 0.95
 background-blur = macos-glass-regular
-window-padding-x = 14
-window-padding-y = 10
+window-padding-x = 16
+window-padding-y = 12
 window-padding-color = extend
 
 # --- Titlebar ---
@@ -24,18 +39,18 @@ macos-titlebar-style = transparent
 macos-icon = glass
 
 # --- Cursor ---
+# Blinking block in Dracula pink — bold, theatrical, deliberate.
+# This is the one theme where a blinking block cursor is on-brand.
 cursor-style = block
 cursor-style-blink = true
-cursor-color = cell-foreground
-cursor-text = cell-background
 
 # --- Selection ---
-# Dracula selection — semi-transparent purple
+# Dracula current-line (#44475a) — stays in the purple-grey family.
 selection-background = #44475a
 selection-foreground = #f8f8f2
 
 # --- Splits ---
-unfocused-split-opacity = 0.80
+unfocused-split-opacity = 0.75
 
 # --- Accessibility ---
 minimum-contrast = 4.5

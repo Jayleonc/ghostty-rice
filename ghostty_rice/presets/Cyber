@@ -1,11 +1,22 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Cyber — Neon-lit cyberpunk vibes for the terminal hacker    ║
+# ║  Cyber — Blade Runner Terminal                               ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# High transparency with a holographic icon. This profile pushes the
-# glass effect to its limits — your desktop wallpaper bleeds through,
-# creating an immersive, futuristic workspace. The hidden titlebar
-# maximizes screen real estate for a distraction-free hacking session.
+# Design philosophy: A floating HUD in a neon-drenched city.
+#
+# This is the ONE profile where aggressive transparency is the point.
+# The desktop wallpaper IS part of the experience — choose a dark,
+# high-contrast wallpaper (neon cityscapes, abstract dark art) and
+# the terminal becomes a translucent heads-up display.
+#
+# Color psychology: Cyan and magenta on dark backgrounds trigger
+# alertness without anxiety — the "cockpit effect." The high
+# contrast of neon on dark mimics bioluminescence, which the
+# human visual system finds inherently compelling.
+#
+# Visual reference: Ridley Scott's "Blade Runner 2049" — the
+# holographic interfaces, rain-streaked glass, information floating
+# in space.
 #
 # Best paired with: Hack Nerd Font, JetBrains Mono NL, or IBM Plex Mono
 # Tip: Use a dark, neon-themed wallpaper for the best glass effect.
@@ -14,30 +25,34 @@
 theme = Catppuccin Macchiato
 
 # --- Window ---
-# Aggressive transparency for the cyberpunk glass effect
-background-opacity = 0.82
+# The glass IS the aesthetic. 0.85 is the floor for readability —
+# below this, text becomes a struggle in any lighting condition.
+# minimum-contrast will rescue individual characters if needed.
+background-opacity = 0.85
 background-blur = macos-glass-clear
-window-padding-x = 16
-window-padding-y = 12
+window-padding-x = 20
+window-padding-y = 14
 window-padding-color = extend
 
 # --- Titlebar ---
-# Hidden titlebar for maximum immersion
+# Hidden chrome: the HUD floats, it doesn't have a window frame.
 macos-titlebar-style = hidden
 macos-icon = holographic
 
 # --- Cursor ---
+# Blinking block — the one profile where a pulsing cursor adds
+# to the cyberpunk rhythm, like a blinking server LED.
 cursor-style = block
 cursor-style-blink = true
-cursor-color = cell-foreground
-cursor-text = cell-background
 
 # --- Selection ---
 selection-background = #494d64
 selection-foreground = #cad3f5
 
 # --- Splits ---
-unfocused-split-opacity = 0.70
+# Strong dimming on unfocused splits — spotlight effect.
+unfocused-split-opacity = 0.65
 
 # --- Accessibility ---
-minimum-contrast = 4.5
+# Bumped to 5.0 to compensate for the transparency.
+minimum-contrast = 5.0

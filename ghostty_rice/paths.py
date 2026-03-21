@@ -9,15 +9,35 @@ from pathlib import Path
 _BUNDLED_PRESETS = Path(__file__).parent / "presets"
 
 
+def _existing_config_file(directory: Path) -> Path | None:
+    """Return the existing Ghostty config file in a directory, if any."""
+    for filename in ("config", "config.ghostty"):
+        candidate = directory / filename
+        if candidate.exists():
+            return candidate
+    return None
+
+
 def ghostty_config_dir() -> Path:
     """Return the Ghostty configuration directory for the current platform.
 
-    Always uses ~/.config/ghostty regardless of platform, following the
-    XDG convention for a consistent and accessible path.
+    On macOS, prefer the active Ghostty config location:
+    - ~/Library/Application Support/com.mitchellh.ghostty (default)
+    - ~/.config/ghostty (XDG fallback)
+    On Linux, use XDG_CONFIG_HOME/ghostty (or ~/.config/ghostty).
     """
     system = platform.system()
     if system == "Darwin":
-        return Path.home() / ".config" / "ghostty"
+        home = Path.home()
+        app_support_dir = home / "Library" / "Application Support" / "com.mitchellh.ghostty"
+        xdg = Path(os.environ.get("XDG_CONFIG_HOME", str(home / ".config")))
+        xdg_dir = xdg / "ghostty"
+
+        if _existing_config_file(app_support_dir):
+            return app_support_dir
+        if _existing_config_file(xdg_dir):
+            return xdg_dir
+        return app_support_dir
     elif system == "Linux":
         xdg = Path(os.environ.get("XDG_CONFIG_HOME", str(Path.home() / ".config")))
         return xdg / "ghostty"
@@ -27,7 +47,11 @@ def ghostty_config_dir() -> Path:
 
 def ghostty_config_file() -> Path:
     """Return the main Ghostty config file path."""
-    return ghostty_config_dir() / "config"
+    config_dir = ghostty_config_dir()
+    existing = _existing_config_file(config_dir)
+    if existing:
+        return existing
+    return config_dir / "config"
 
 
 def rice_dir() -> Path:
@@ -43,6 +67,11 @@ def rice_dir() -> Path:
 
 def user_profiles_dir() -> Path:
     """Return the directory where user profiles are stored."""
+    config_dir = ghostty_config_dir()
+    legacy = config_dir / "rice-profiles"
+    if legacy.exists():
+        return legacy
+
     d = rice_dir() / "profiles"
     d.mkdir(parents=True, exist_ok=True)
     return d

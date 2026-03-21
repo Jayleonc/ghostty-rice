@@ -1,49 +1,49 @@
 [profiles."Catppuccin Mocha"]
-description = "Warm and cozy — the most popular dev palette"
+description = "Late-night café warmth — near-opaque, steady bar cursor, Wong Kar-wai intimacy"
 author = "ghostty-rice"
-tags = ["dark", "warm", "popular", "glass"]
+tags = ["dark", "warm", "readable", "cozy"]
 
 [profiles."Rose Pine"]
-description = "Elegant dark with auto light/dark switching"
+description = "Botanical studio at golden hour — generous spacing, soft light, auto light/dark"
 author = "ghostty-rice"
-tags = ["dark", "light", "elegant", "auto-switch"]
+tags = ["dark", "light", "elegant", "auto-switch", "spacious"]
 
 [profiles."Cyber"]
-description = "Cyberpunk vibes — high transparency, holographic icon"
+description = "Blade Runner HUD — translucent glass on neon wallpapers, hidden chrome"
 author = "ghostty-rice"
-tags = ["dark", "cyberpunk", "glass", "holographic"]
+tags = ["dark", "cyberpunk", "glass", "holographic", "immersive"]
 
 [profiles."Frosted"]
-description = "macOS native frosted glass with Catppuccin Latte"
+description = "Morning studio — macOS frosted glass, light theme tuned for daylight readability"
 author = "ghostty-rice"
-tags = ["light", "glass", "macos", "native"]
+tags = ["light", "glass", "macos", "native", "daytime"]
 
 [profiles."Minimal"]
-description = "No chrome, no blur, just code"
+description = "The typewriter — zero decoration, generous margins, Dieter Rams simplicity"
 author = "ghostty-rice"
-tags = ["dark", "minimal", "distraction-free"]
+tags = ["dark", "minimal", "distraction-free", "opaque"]
 
 [profiles."Nord"]
-description = "Arctic, north-bluish palette — calm and focused"
+description = "Scandinavian clarity — cool precision, no-fidget cursor, Arrival-grade calm"
 author = "ghostty-rice"
-tags = ["dark", "cool", "arctic", "professional"]
+tags = ["dark", "cool", "arctic", "professional", "focused"]
 
 [profiles."Tokyo Night"]
-description = "Clean dark theme celebrating Tokyo city lights"
+description = "Lost in Translation — deep navy, neon accents, 3 AM in Shinjuku"
 author = "ghostty-rice"
-tags = ["dark", "vibrant", "modern", "blue"]
+tags = ["dark", "blue", "cinematic", "modern", "night"]
 
 [profiles."Gruvbox"]
-description = "Retro groove with warm, earthy tones"
+description = "Analog warmth — fully opaque, earth tones, Wes Anderson palette"
 author = "ghostty-rice"
-tags = ["dark", "warm", "retro", "vim"]
+tags = ["dark", "warm", "retro", "opaque", "earthy"]
 
 [profiles."Dracula"]
-description = "Iconic dark theme with vibrant purple and pink accents"
+description = "Gothic cinema — theatrical purple-grey, bold accents, Tim Burton drama"
 author = "ghostty-rice"
-tags = ["dark", "purple", "vibrant", "iconic"]
+tags = ["dark", "purple", "vibrant", "dramatic", "cinematic"]
 
 [profiles."Solarized"]
-description = "Precision colors — scientific palette with auto light/dark"
+description = "The architect's desk — scientific precision, near-solid, auto light/dark"
 author = "ghostty-rice"
-tags = ["dark", "light", "scientific", "auto-switch"]
+tags = ["dark", "light", "scientific", "auto-switch", "precise"]

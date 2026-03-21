@@ -1,11 +1,22 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Minimal — No chrome, no blur, just code                    ║
+# ║  Minimal — The Typewriter                                    ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# A distraction-free profile for developers who want nothing between
-# them and their code. No titlebar, no transparency, no blur effects.
-# Generous padding gives the text room to breathe. The bar cursor with
-# no blink keeps your focus on the code, not the cursor.
+# Design philosophy: A blank page and a steady hand.
+#
+# Inspired by Dieter Rams' principle: "Good design is as little
+# design as possible." No transparency, no blur, no titlebar,
+# no blinking. Just text on a solid background with generous
+# margins — like a well-set page of a Penguin Classic.
+#
+# Color psychology: The absence of decoration forces the brain
+# to attend to content. Generous whitespace (padding) reduces
+# cognitive load — the "breathing room" effect documented in
+# typographic research. A non-blinking bar cursor minimizes
+# peripheral visual interruption.
+#
+# Visual reference: Wes Anderson's title cards — centered text,
+# deliberate spacing, nothing accidental.
 #
 # Best paired with: Iosevka, Pragmasevka, or Input Mono
 
@@ -13,30 +24,30 @@
 theme = Builtin Tango Dark
 
 # --- Window ---
-# Fully opaque — no glass, no distractions
+# Fully opaque — no glass, no distractions.
+# Wide margins: the text sits in the page, not edge-to-edge.
 background-opacity = 1.0
-window-padding-x = 20
-window-padding-y = 16
+window-padding-x = 24
+window-padding-y = 20
 window-padding-color = extend
 
 # --- Titlebar ---
-# Remove all window chrome
+# Strip everything. The window IS the text.
 macos-titlebar-style = hidden
 window-decoration = false
 
 # --- Cursor ---
-# Steady bar cursor — minimal movement on screen
+# Steady bar — the quietest cursor. You know where you are
+# without anything moving on screen.
 cursor-style = bar
 cursor-style-blink = false
-cursor-color = cell-foreground
-cursor-text = cell-background
 
 # --- Selection ---
 selection-background = #555753
 selection-foreground = #eeeeec
 
 # --- Splits ---
-unfocused-split-opacity = 0.75
+unfocused-split-opacity = 0.70
 
 # --- Accessibility ---
 minimum-contrast = 4.5

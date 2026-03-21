@@ -1,11 +1,22 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Frosted — macOS native frosted glass, light and airy       ║
+# ║  Frosted — Morning Studio                                    ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# A light theme that embraces macOS design language. The frosted glass
-# effect with Catppuccin Latte creates a native, polished look that
-# blends seamlessly with the rest of your desktop. Perfect for daytime
-# coding with natural light.
+# Design philosophy: Coding by a sunlit window.
+#
+# Light themes are harder to get right than dark ones — the eye is
+# more sensitive to contrast issues in bright environments. This
+# profile uses Catppuccin Latte (the most carefully tuned light
+# theme available) with a controlled frosted glass effect.
+#
+# Color psychology: Light backgrounds with warm undertones mimic
+# natural paper, reducing the "screen fatigue" that pure-white
+# backgrounds cause. The slight transparency connects the terminal
+# to the desktop, making it feel less like a separate application
+# and more like a layer of your workspace.
+#
+# Visual reference: Apple's own design language — the Notes app,
+# Safari's toolbar, the frosted dock. Native, not foreign.
 #
 # Best paired with: SF Mono, Menlo, or Monaspace Neon
 
@@ -13,25 +24,28 @@
 theme = Catppuccin Latte
 
 # --- Window ---
-# Strong transparency for the frosted glass look
-background-opacity = 0.80
+# Light themes need MORE opacity than dark themes. Text on light
+# backgrounds loses contrast faster with transparency because
+# most wallpapers have dark regions that muddy the bright base.
+background-opacity = 0.90
 background-blur = macos-glass-clear
-window-padding-x = 14
-window-padding-y = 10
+window-padding-x = 16
+window-padding-y = 12
 window-padding-color = extend
 
 # --- Titlebar ---
+# Transparent tabs — feel like part of the page, not a frame.
 macos-titlebar-style = transparent
 macos-icon = glass
 
 # --- Cursor ---
+# Block cursor is more visible on light backgrounds where a thin
+# bar can disappear into the text.
 cursor-style = block
 cursor-style-blink = true
-cursor-color = cell-foreground
-cursor-text = cell-background
 
 # --- Selection ---
-# Catppuccin Latte surface1 for light-mode selection
+# Catppuccin Latte surface1 — subtle but clear on the bright base.
 selection-background = #bcc0cc
 selection-foreground = #4c4f69
 
@@ -39,4 +53,6 @@ selection-foreground = #4c4f69
 unfocused-split-opacity = 0.85
 
 # --- Accessibility ---
-minimum-contrast = 4.5
+# Bumped for light theme: light backgrounds are more sensitive
+# to contrast issues than dark ones.
+minimum-contrast = 5.0

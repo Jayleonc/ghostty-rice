@@ -1,10 +1,20 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Rosé Pine — All natural pine, faux fur, and a bit of soho  ║
+# ║  Rosé Pine — Botanical Studio                               ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# An elegant theme that automatically adapts to your system appearance.
-# Dark mode uses Rosé Pine's signature muted golds and subtle roses.
-# Light mode switches to Rosé Pine Dawn with warm, paper-like tones.
+# Design philosophy: A designer's atelier at golden hour.
+#
+# Rosé Pine's palette draws from natural pigments — muted golds,
+# dusty roses, and pine-green undertones. It's the only popular
+# theme that feels handcrafted rather than computed.
+#
+# Color psychology: Muted, desaturated tones invoke calm and focus
+# (the "library effect"). The warmth of gold (#f6c177) as accent
+# triggers the brain's reward pathway — a subtle "highlight" that
+# feels earned, not shouted.
+#
+# Visual reference: Terrence Malick's "The Tree of Life" — soft
+# light through curtains, everything bathed in warmth, never harsh.
 #
 # Best paired with: Maple Mono, Berkeley Mono, or Inter Mono
 
@@ -12,10 +22,12 @@
 theme = light:Rose Pine Dawn,dark:Rose Pine
 
 # --- Window ---
-background-opacity = 0.93
+# Rosé Pine's muted tones tolerate a touch more glass than
+# high-contrast themes — the blur adds a watercolor quality.
+background-opacity = 0.95
 background-blur = macos-glass-regular
-window-padding-x = 14
-window-padding-y = 10
+window-padding-x = 18
+window-padding-y = 14
 window-padding-color = extend
 
 # --- Titlebar ---
@@ -23,14 +35,12 @@ macos-titlebar-style = transparent
 macos-icon = glass
 
 # --- Cursor ---
-# Bar cursor suits Rosé Pine's elegant, minimal aesthetic
+# Slim bar, gentle blink — like a candle flame in a quiet room.
 cursor-style = bar
 cursor-style-blink = true
-cursor-color = cell-foreground
-cursor-text = cell-background
 
 # --- Selection ---
-# Rosé Pine highlight-med for a gentle selection overlay
+# Highlight-med (#44415a) — a gentle veil, not a highlighter pen.
 selection-background = #44415a
 selection-foreground = #e0def4
 

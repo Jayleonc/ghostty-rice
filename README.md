@@ -17,6 +17,42 @@
 
 ---
 
+> **Beyond just colors — total visual control for your Ghostty terminal.**
+
+<!-- 🎬 SHOWCASE — replace the placeholder below with your own GIF/screenshots -->
+<p align="center">
+  <img src="docs/demo.gif" alt="ghostty-rice demo — switching profiles in real time" width="720">
+</p>
+
+<p align="center">
+  <i>One command. Entire visual transformation. Ghostty reloads instantly.</i>
+</p>
+
+<!-- 📸 PROFILE GALLERY — add screenshots of each profile here -->
+<details>
+<summary><b>Profile Gallery</b> (click to expand)</summary>
+<br>
+
+| Catppuccin Mocha | Rose Pine | Cyber |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/catppuccin-mocha.png" width="280"> | <img src="docs/screenshots/rose-pine.png" width="280"> | <img src="docs/screenshots/cyber.png" width="280"> |
+
+| Nord | Tokyo Night | Dracula |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/nord.png" width="280"> | <img src="docs/screenshots/tokyo-night.png" width="280"> | <img src="docs/screenshots/dracula.png" width="280"> |
+
+| Gruvbox | Solarized | Frosted |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/gruvbox.png" width="280"> | <img src="docs/screenshots/solarized.png" width="280"> | <img src="docs/screenshots/frosted.png" width="280"> |
+
+| Minimal | | |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/minimal.png" width="280"> | | |
+
+</details>
+
+---
+
 Color themes only change 16 ANSI colors. **ghostty-rice** manages complete visual profiles — colors, opacity, blur, titlebar, cursor, padding, icons — and switches them with a single command.
 
 ```bash
@@ -157,6 +193,18 @@ ghostty-rice preserves your base Ghostty config (shell, fonts, keybinds) and onl
 |----------|------------------|-------------|
 | macOS | Full | Native AppleScript API |
 | Linux | Full | Via xdotool (optional) |
+
+## Call for Themes
+
+We're building a collection of stunning Ghostty visual profiles — and **your profile could be next**.
+
+If you've crafted a look you love, submit it as a PR:
+
+1. Add your profile file to `ghostty_rice/presets/`
+2. Add metadata in `ghostty_rice/presets/manifest.toml`
+3. (Bonus) Include a screenshot in `docs/screenshots/`
+
+All contributors are credited in the manifest. See [Contributing](#contributing) below for dev setup.
 
 ## Contributing
 

@@ -1,42 +1,58 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Solarized — Precision colors for machines and people       ║
+# ║  Solarized — The Architect's Desk                            ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# The scientifically engineered color scheme by Ethan Schoonover.
-# Solarized uses carefully chosen CIELAB lightness relationships and
-# a unique set of sixteen colors designed for both light and dark modes.
-# Auto-switches between Solarized Dark and Light based on system setting.
+# Design philosophy: Precision over personality.
+#
+# Ethan Schoonover spent years engineering Solarized using CIELAB
+# color space. Every color maintains mathematically precise
+# lightness relationships. This means Solarized looks equally good
+# at any time of day, in any lighting — because the perceptual
+# distances between colors are constant, not dependent on ambient
+# conditions.
+#
+# Color psychology: Solarized's base hues are warm-neutral (neither
+# blue-cold nor orange-warm), sitting in the "non-distracting"
+# zone of the hue wheel. This makes it the least fatiguing theme
+# for 12+ hour workdays — it doesn't stimulate OR sedate.
+#
+# Visual reference: Christopher Nolan's "Interstellar" — every
+# visual decision serves clarity. Precise, calculated, beautiful
+# not from ornament but from correctness.
 #
 # Best paired with: Inconsolata, Droid Sans Mono, or Ubuntu Mono
 
 # --- Theme (auto light/dark switching) ---
-theme = light:Solarized Light,dark:Solarized Dark
+theme = light:iTerm2 Solarized Light,dark:iTerm2 Solarized Dark
 
 # --- Window ---
-# Near-opaque to preserve Solarized's precise color relationships
-background-opacity = 0.96
+# Solarized's colors are placed on a precise perceptual grid.
+# ANY transparency shifts those relationships. Keep it near-solid.
+background-opacity = 0.98
 background-blur = macos-glass-regular
-window-padding-x = 14
-window-padding-y = 10
+window-padding-x = 16
+window-padding-y = 12
 window-padding-color = extend
 
 # --- Titlebar ---
+# Tabs feel native with Solarized's warm base tones.
 macos-titlebar-style = transparent
 macos-icon = glass
 
 # --- Cursor ---
+# Block, no blink — like a drafting cursor on graph paper.
+# Solarized is scientific; the cursor should be too.
 cursor-style = block
-cursor-style-blink = true
-cursor-color = cell-foreground
-cursor-text = cell-background
+cursor-style-blink = false
 
 # --- Selection ---
-# Solarized base01 for selection
+# Solarized base01 (#586e75) — part of the original 16-color spec,
+# designed specifically for this purpose.
 selection-background = #586e75
 selection-foreground = #fdf6e3
 
 # --- Splits ---
-unfocused-split-opacity = 0.85
+unfocused-split-opacity = 0.80
 
 # --- Accessibility ---
 minimum-contrast = 4.5

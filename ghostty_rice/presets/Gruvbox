@@ -1,11 +1,23 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  Gruvbox — Retro groove with warm, earthy tones             ║
+# ║  Gruvbox — Analog Warmth                                     ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# A retro-inspired theme with warm, earthy colors. Gruvbox Dark Hard
-# uses a deep background with high-contrast warm accents — oranges,
-# yellows, and aquas that feel both vintage and modern. Particularly
-# popular among Vim/Neovim users and fans of the "cozy terminal" look.
+# Design philosophy: Film photography in a wood-paneled darkroom.
+#
+# Gruvbox is the warmest credible dark theme. Its earthy oranges,
+# ochre yellows, and olive greens feel like they were mixed from
+# pigment, not picked from a color wheel. "Hard" variant uses
+# #1d2021 as base — darker than standard Gruvbox, pushing the
+# warm accents into higher relief.
+#
+# Color psychology: Earth tones trigger the brain's familiarity
+# response — these are the colors of wood, leather, aged paper.
+# This "material warmth" has been shown to increase perceived
+# comfort in digital interfaces (Bonnardel et al., 2011). The
+# high contrast (>8:1) makes extended reading sessions easy.
+#
+# Visual reference: Wes Anderson's "The Grand Budapest Hotel" —
+# warm, saturated, textured. Every frame is a painting.
 #
 # Best paired with: Iosevka Term, Hack, or Fira Mono
 
@@ -13,10 +25,12 @@
 theme = Gruvbox Dark Hard
 
 # --- Window ---
-background-opacity = 0.95
-background-blur = macos-glass-regular
-window-padding-x = 12
-window-padding-y = 8
+# Fully opaque: Gruvbox's identity IS its warm background.
+# Any transparency replaces that warmth with whatever your
+# wallpaper happens to be — defeating the entire point.
+background-opacity = 1.0
+window-padding-x = 14
+window-padding-y = 10
 window-padding-color = extend
 
 # --- Titlebar ---
@@ -24,19 +38,20 @@ macos-titlebar-style = transparent
 macos-icon = glass
 
 # --- Cursor ---
-# Underline cursor for the retro terminal feel
+# Underline cursor — the retro terminal aesthetic.
+# Steady: the warm palette is already rich enough without
+# adding motion.
 cursor-style = underline
-cursor-style-blink = true
-cursor-color = cell-foreground
-cursor-text = cell-background
+cursor-style-blink = false
 
 # --- Selection ---
-# Gruvbox bg3 for warm selection
+# Gruvbox bg3 (#665c54) — warm grey that belongs to the palette,
+# like selecting text on aged parchment.
 selection-background = #665c54
 selection-foreground = #ebdbb2
 
 # --- Splits ---
-unfocused-split-opacity = 0.85
+unfocused-split-opacity = 0.80
 
 # --- Accessibility ---
 minimum-contrast = 4.5

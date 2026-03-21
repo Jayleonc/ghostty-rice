@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from textwrap import dedent
 
+from ghostty_rice.paths import bundled_presets_dir
 from ghostty_rice.profile import _extract_base_config, _scan_profiles
 
 
@@ -75,3 +76,11 @@ def test_extract_base_config() -> None:
     assert "font-family" in base
     assert "theme = Catppuccin" not in base
     assert "Profile: test" not in base
+
+
+def test_critical_builtin_theme_names_match_ghostty() -> None:
+    tokyo = (bundled_presets_dir() / "Tokyo Night").read_text()
+    solarized = (bundled_presets_dir() / "Solarized").read_text()
+
+    assert "theme = TokyoNight" in tokyo
+    assert "theme = light:iTerm2 Solarized Light,dark:iTerm2 Solarized Dark" in solarized
