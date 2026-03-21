@@ -22,3 +22,11 @@ def test_cli_list() -> None:
     assert "Catppuccin Mocha" in result.output
     assert "Rose Pine" in result.output
     assert "Cyber" in result.output
+
+
+def test_cli_doctor() -> None:
+    runner = CliRunner()
+    result = runner.invoke(cli, ["doctor"])
+    assert result.exit_code == 0
+    assert "ghostty-rice doctor" in result.output
+    assert "Profiles available" in result.output

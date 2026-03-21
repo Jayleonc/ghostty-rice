@@ -9,7 +9,8 @@ from rich.console import Console
 from rich.table import Table
 
 from ghostty_rice import __version__
-from ghostty_rice.paths import user_profiles_dir
+from ghostty_rice.paths import ghostty_config_dir, ghostty_config_file, user_profiles_dir
+from ghostty_rice.platform import get_platform
 from ghostty_rice.preview import preview_profile
 from ghostty_rice.profile import apply_profile, get_current_profile, get_profile, list_profiles
 from ghostty_rice.reload import reload_ghostty
@@ -118,3 +119,73 @@ def current_cmd() -> None:
         console.print(f"[bold]{current}[/bold]")
     else:
         console.print("[yellow]No profile active.[/yellow]")
+
+
+@cli.command("doctor")
+def doctor_cmd() -> None:
+    """Check Ghostty installation, permissions, and runtime status."""
+    from ghostty_rice.profile import list_profiles as _list_profiles
+
+    plat = get_platform()
+    checks = plat.run_diagnostics()
+
+    # Add rice-specific checks
+    config_dir = ghostty_config_dir()
+    config_file = ghostty_config_file()
+    profiles = _list_profiles()
+    current = get_current_profile()
+
+    checks.append(
+        type(checks[0])(
+            name="Config directory",
+            passed=config_dir.exists(),
+            message=str(config_dir),
+            hint=f"Create it: mkdir -p '{config_dir}'" if not config_dir.exists() else "",
+        )
+    )
+    checks.append(
+        type(checks[0])(
+            name="Config file",
+            passed=config_file.exists(),
+            message=str(config_file) if config_file.exists() else "Not found",
+            hint="Run `rice use <profile>` to create one" if not config_file.exists() else "",
+        )
+    )
+    checks.append(
+        type(checks[0])(
+            name="Profiles available",
+            passed=len(profiles) > 0,
+            message=str(len(profiles)),
+        )
+    )
+    checks.append(
+        type(checks[0])(
+            name="Active profile",
+            passed=current is not None,
+            message=current or "None",
+            hint="Run `rice use <profile>` to activate one" if not current else "",
+        )
+    )
+
+    # Render
+    console.print()
+    console.print("[bold]ghostty-rice doctor[/bold]")
+    console.print()
+
+    all_passed = True
+    for check in checks:
+        if check.passed:
+            icon = "[green]OK[/green]"
+        else:
+            icon = "[red]!![/red]"
+            all_passed = False
+
+        console.print(f"  {icon}  [bold]{check.name}[/bold]: {check.message}")
+        if check.hint:
+            console.print(f"       [dim]{check.hint}[/dim]")
+
+    console.print()
+    if all_passed:
+        console.print("[green]All checks passed.[/green]")
+    else:
+        console.print("[yellow]Some checks need attention.[/yellow]")
