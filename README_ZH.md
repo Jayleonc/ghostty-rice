@@ -1,15 +1,18 @@
+<h1 align="center">🍚 ghostty-rice</h1>
+
 <p align="center">
-  <h1 align="center">ghostty-rice</h1>
-  <p align="center">
-    <a href="https://ghostty.org">Ghostty</a> 终端的全方位视觉配置管理器 —— 不只是换颜色。
-  </p>
-  <p align="center">
-    <a href="https://pypi.org/project/ghostty-rice/"><img src="https://img.shields.io/pypi/v/ghostty-rice?style=flat-square&color=blue" alt="PyPI"></a>
-    <a href="https://github.com/jayleonc/ghostty-rice/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jayleonc/ghostty-rice?style=flat-square" alt="License"></a>
-    <a href="https://github.com/jayleonc/ghostty-rice/actions"><img src="https://img.shields.io/github/actions/workflow/status/jayleonc/ghostty-rice/ci.yml?style=flat-square&label=CI" alt="CI"></a>
-    <img src="https://img.shields.io/pypi/pyversions/ghostty-rice?style=flat-square" alt="Python">
-    <a href="./README.md"><img src="https://img.shields.io/badge/lang-English-blue?style=flat-square" alt="English"></a>
-  </p>
+  <b><a href="https://ghostty.org">Ghostty</a> 终端的全方位视觉配置管理器 —— 不只是换颜色。</b>
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/ghostty-rice/"><img src="https://img.shields.io/pypi/v/ghostty-rice?style=flat-square&color=blue&logo=pypi&logoColor=white" alt="PyPI"></a>
+  <img src="https://img.shields.io/pypi/pyversions/ghostty-rice?style=flat-square&logo=python&logoColor=white" alt="Python">
+  <a href="https://github.com/jayleonc/ghostty-rice/actions"><img src="https://img.shields.io/github/actions/workflow/status/jayleonc/ghostty-rice/ci.yml?style=flat-square&label=CI&logo=github" alt="CI"></a>
+  <a href="https://github.com/jayleonc/ghostty-rice/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jayleonc/ghostty-rice?style=flat-square" alt="License"></a>
+</p>
+
+<p align="center">
+  <a href="./README.md">English</a> • <b>简体中文</b>
 </p>
 
 ---
@@ -24,14 +27,14 @@ rice use "Catppuccin Mocha"    # 切换方案，Ghostty 自动重载
 
 [catppuccin/ghostty](https://github.com/catppuccin/ghostty) 和 [iTerm2-Color-Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes) 是优秀的调色盘项目。但终端的视觉体验远不止 16 个颜色：
 
-| 它们管什么 | ghostty-rice 管什么 |
-|-----------|-------------------|
-| 前景色 / 背景色 | 它们做的所有事，加上： |
-| 16 色 ANSI 调色盘 | 窗口透明度和毛玻璃效果 |
-| | 标题栏样式（标签页 / 透明 / 隐藏） |
-| | 光标形状、颜色、动画 |
-| | 窗口内边距 |
-| | App 图标切换 |
+| 传统调色盘项目 | 🍚 `ghostty-rice` |
+|---------------|-------------------|
+| ✅ 前景色与背景色 | ✅ **涵盖左侧所有内容，外加：** |
+| ✅ 16 色 ANSI 调色盘 | ✅ 窗口透明度与毛玻璃效果 |
+| ❌ 标题栏样式 | ✅ 标题栏样式（标签页 / 透明 / 隐藏） |
+| ❌ 光标定制 | ✅ 光标形状、颜色与动画 |
+| ❌ 窗口内外边距 | ✅ 窗口内边距定制 |
+| ❌ App 图标 | ✅ App 图标一键切换 |
 
 **一句话：它们是调色盘，我们是整套视觉方案。**
 
@@ -79,11 +82,11 @@ rice current
 
 | 方案 | 风格 |
 |------|------|
-| **Catppuccin Mocha** | 温暖柔和，程序员圈最火的配色 |
-| **Rose Pine** | 优雅暗色，跟随系统自动切换明暗 |
-| **Cyber** | 赛博朋克 —— 高透明度、隐藏标题栏、全息图标 |
-| **Minimal** | 极简 —— 无标题栏、无模糊、只有代码 |
-| **Frosted** | macOS 原生毛玻璃，亮色模式 |
+| ☕ **Catppuccin Mocha** | 温暖柔和，程序员圈最火的配色 |
+| 🌲 **Rose Pine** | 优雅暗色，跟随系统自动切换明暗 |
+| 🤖 **Cyber** | 赛博朋克 —— 高透明度、隐藏标题栏、全息图标 |
+| ⬜ **Minimal** | 极简 —— 无标题栏、无模糊、只有代码 |
+| 🧊 **Frosted** | macOS 原生毛玻璃，亮色模式 |
 
 ## 自定义方案
 

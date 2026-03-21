@@ -1,15 +1,18 @@
+<h1 align="center">🍚 ghostty-rice</h1>
+
 <p align="center">
-  <h1 align="center">ghostty-rice</h1>
-  <p align="center">
-    Full visual profile manager for <a href="https://ghostty.org">Ghostty</a> — beyond just colors.
-  </p>
-  <p align="center">
-    <a href="https://pypi.org/project/ghostty-rice/"><img src="https://img.shields.io/pypi/v/ghostty-rice?style=flat-square&color=blue" alt="PyPI"></a>
-    <a href="https://github.com/jayleonc/ghostty-rice/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jayleonc/ghostty-rice?style=flat-square" alt="License"></a>
-    <a href="https://github.com/jayleonc/ghostty-rice/actions"><img src="https://img.shields.io/github/actions/workflow/status/jayleonc/ghostty-rice/ci.yml?style=flat-square&label=CI" alt="CI"></a>
-    <img src="https://img.shields.io/pypi/pyversions/ghostty-rice?style=flat-square" alt="Python">
-    <a href="./README_ZH.md"><img src="https://img.shields.io/badge/lang-简体中文-red?style=flat-square" alt="中文"></a>
-  </p>
+  <b>Full visual profile manager for <a href="https://ghostty.org">Ghostty</a> — beyond just colors.</b>
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/ghostty-rice/"><img src="https://img.shields.io/pypi/v/ghostty-rice?style=flat-square&color=blue&logo=pypi&logoColor=white" alt="PyPI"></a>
+  <img src="https://img.shields.io/pypi/pyversions/ghostty-rice?style=flat-square&logo=python&logoColor=white" alt="Python">
+  <a href="https://github.com/jayleonc/ghostty-rice/actions"><img src="https://img.shields.io/github/actions/workflow/status/jayleonc/ghostty-rice/ci.yml?style=flat-square&label=CI&logo=github" alt="CI"></a>
+  <a href="https://github.com/jayleonc/ghostty-rice/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jayleonc/ghostty-rice?style=flat-square" alt="License"></a>
+</p>
+
+<p align="center">
+  <b>English</b> • <a href="./README_ZH.md">简体中文</a>
 </p>
 
 ---
@@ -24,14 +27,14 @@ rice use "Catppuccin Mocha"    # Switch profile, auto-reloads Ghostty
 
 Projects like [catppuccin/ghostty](https://github.com/catppuccin/ghostty) and [iTerm2-Color-Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes) are color palettes. A terminal's look is more than 16 colors:
 
-| What they manage | What ghostty-rice manages |
-|------------------|--------------------------|
-| Foreground/background | Everything they do, plus: |
-| 16 ANSI palette colors | Window opacity & blur effects |
-| | Titlebar style (tabs, transparent, hidden) |
-| | Cursor shape, color, animation |
-| | Window padding & spacing |
-| | App icon variant |
+| Other Color Schemes | 🍚 `ghostty-rice` |
+|---------------------|-------------------|
+| ✅ Foreground & Background | ✅ **Everything they do, plus:** |
+| ✅ 16 ANSI Palette Colors | ✅ Window Opacity & Blur Effects |
+| ❌ Titlebar Style | ✅ Titlebar Style (tabs, transparent, hidden) |
+| ❌ Cursor Customization | ✅ Cursor Shape, Color & Animation |
+| ❌ Window Spacing | ✅ Window Padding & Spacing |
+| ❌ App Icon | ✅ App Icon Variant |
 
 ## Install
 
@@ -77,11 +80,11 @@ rice current
 
 | Profile | Style |
 |---------|-------|
-| **Catppuccin Mocha** | Warm, cozy, the most popular dev palette |
-| **Rose Pine** | Elegant dark with automatic light/dark switching |
-| **Cyber** | High transparency, hidden chrome, holographic icon |
-| **Minimal** | No titlebar, no blur, just code |
-| **Frosted** | macOS native frosted glass, light mode |
+| ☕ **Catppuccin Mocha** | Warm, cozy, the most popular dev palette |
+| 🌲 **Rose Pine** | Elegant dark with automatic light/dark switching |
+| 🤖 **Cyber** | High transparency, hidden chrome, holographic icon |
+| ⬜ **Minimal** | No titlebar, no blur, just code |
+| 🧊 **Frosted** | macOS native frosted glass, light mode |
 
 ## Custom Profiles
 
