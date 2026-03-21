@@ -1,0 +1,170 @@
+<p align="center">
+  <h1 align="center">ghostty-rice</h1>
+  <p align="center">
+    <a href="https://ghostty.org">Ghostty</a> 终端的全方位视觉配置管理器 —— 不只是换颜色。
+  </p>
+  <p align="center">
+    <a href="https://pypi.org/project/ghostty-rice/"><img src="https://img.shields.io/pypi/v/ghostty-rice?style=flat-square&color=blue" alt="PyPI"></a>
+    <a href="https://github.com/jayleonc/ghostty-rice/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jayleonc/ghostty-rice?style=flat-square" alt="License"></a>
+    <a href="https://github.com/jayleonc/ghostty-rice/actions"><img src="https://img.shields.io/github/actions/workflow/status/jayleonc/ghostty-rice/ci.yml?style=flat-square&label=CI" alt="CI"></a>
+    <img src="https://img.shields.io/pypi/pyversions/ghostty-rice?style=flat-square" alt="Python">
+    <a href="./README.md"><img src="https://img.shields.io/badge/lang-English-blue?style=flat-square" alt="English"></a>
+  </p>
+</p>
+
+---
+
+传统主题只改 16 色调色盘。**ghostty-rice** 管理完整的视觉方案 —— 颜色、透明度、毛玻璃、标题栏、光标、边距、图标 —— 一条命令全部切换。
+
+```bash
+rice use "Catppuccin Mocha"    # 切换方案，Ghostty 自动重载
+```
+
+## 为什么需要 ghostty-rice？
+
+[catppuccin/ghostty](https://github.com/catppuccin/ghostty) 和 [iTerm2-Color-Schemes](https://github.com/mbadolato/iTerm2-Color-Schemes) 是优秀的调色盘项目。但终端的视觉体验远不止 16 个颜色：
+
+| 它们管什么 | ghostty-rice 管什么 |
+|-----------|-------------------|
+| 前景色 / 背景色 | 它们做的所有事，加上： |
+| 16 色 ANSI 调色盘 | 窗口透明度和毛玻璃效果 |
+| | 标题栏样式（标签页 / 透明 / 隐藏） |
+| | 光标形状、颜色、动画 |
+| | 窗口内边距 |
+| | App 图标切换 |
+
+**一句话：它们是调色盘，我们是整套视觉方案。**
+
+## 安装
+
+```bash
+pipx install ghostty-rice
+```
+
+<details>
+<summary>其他安装方式</summary>
+
+```bash
+# pip 安装
+pip install ghostty-rice
+
+# 从源码安装
+git clone https://github.com/jayleonc/ghostty-rice.git
+cd ghostty-rice
+pip install -e .
+```
+
+</details>
+
+## 快速上手
+
+```bash
+# 查看所有可用方案
+rice list
+
+# 切换方案（自动重载 Ghostty）
+rice use "Catppuccin Mocha"
+
+# 预览方案（不切换）
+rice preview "Cyber"
+
+# 一键检查环境
+rice doctor
+
+# 查看当前方案
+rice current
+```
+
+## 内置方案
+
+| 方案 | 风格 |
+|------|------|
+| **Catppuccin Mocha** | 温暖柔和，程序员圈最火的配色 |
+| **Rose Pine** | 优雅暗色，跟随系统自动切换明暗 |
+| **Cyber** | 赛博朋克 —— 高透明度、隐藏标题栏、全息图标 |
+| **Minimal** | 极简 —— 无标题栏、无模糊、只有代码 |
+| **Frosted** | macOS 原生毛玻璃，亮色模式 |
+
+## 自定义方案
+
+方案文件完全遵循 Ghostty 原生格式 —— 纯 `key = value`，无文件扩展名，文件名即方案名。
+
+**1. 从已有方案创建：**
+
+```bash
+rice create "My Theme" --from "Catppuccin Mocha"
+```
+
+**2. 或者从零开始：**
+
+在 Ghostty 配置目录的 `rice-profiles/` 下创建文件：
+
+| 平台 | 路径 |
+|------|------|
+| macOS | `~/Library/Application Support/com.mitchellh.ghostty/rice-profiles/` |
+| Linux | `~/.config/ghostty/rice-profiles/` |
+
+```ini
+theme = Catppuccin Mocha
+background-opacity = 0.90
+background-blur = macos-glass-regular
+macos-titlebar-style = transparent
+window-padding-x = 12
+window-padding-y = 8
+cursor-style = block
+cursor-style-blink = true
+```
+
+**3. 添加元数据**（可选），在同目录下的 `manifest.toml` 中：
+
+```toml
+[profiles."My Theme"]
+description = "我的自定义方案"
+author = "me"
+tags = ["dark", "custom"]
+```
+
+**4. 使用：**
+
+```bash
+rice use "My Theme"
+```
+
+## 环境诊断
+
+```bash
+rice doctor
+```
+
+一键检查：Ghostty 安装状态、版本号、运行状态、自动化权限、配置目录、方案加载情况。
+
+## 工作原理
+
+ghostty-rice 会保留你的基础配置（Shell、字体、快捷键等），只管理视觉方案部分。切换时：
+
+1. 基础配置原封不动
+2. 视觉方案部分被替换
+3. Ghostty 自动重载（macOS 通过原生 AppleScript API，Linux 通过 xdotool）
+
+## 平台支持
+
+| 平台 | 方案切换 | 自动重载 |
+|------|---------|---------|
+| macOS | 完整支持 | 原生 AppleScript API |
+| Linux | 完整支持 | xdotool（可选） |
+
+## 参与贡献
+
+欢迎贡献 —— 特别是新的视觉方案、平台支持、Shader 管理。
+
+```bash
+git clone https://github.com/jayleonc/ghostty-rice.git
+cd ghostty-rice
+uv venv .venv && source .venv/bin/activate
+uv pip install -e ".[dev]"
+pytest
+```
+
+## 开源协议
+
+[MIT](LICENSE)
