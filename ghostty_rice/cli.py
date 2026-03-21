@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import shutil
+from collections.abc import Callable
 
 import click
 from rich.console import Console
@@ -13,10 +14,118 @@ from ghostty_rice.colors import show_all_colors, show_profile_colors
 from ghostty_rice.paths import ghostty_config_dir, ghostty_config_file, user_profiles_dir
 from ghostty_rice.platform import get_platform
 from ghostty_rice.preview import preview_profile
-from ghostty_rice.profile import apply_profile, get_current_profile, get_profile, list_profiles
+from ghostty_rice.profile import (
+    Profile,
+    apply_profile,
+    get_current_profile,
+    get_profile,
+    list_profiles,
+)
 from ghostty_rice.reload import reload_ghostty
 
 console = Console()
+
+
+def _render_switch_table(
+    profiles: list[Profile],
+    current_index: int,
+    current_name: str | None,
+    status_ok: bool,
+    status_message: str | None,
+) -> None:
+    """Render interactive switcher table."""
+    table = Table(
+        title="Interactive Profile Switcher",
+        border_style="bright_blue",
+        show_lines=False,
+    )
+    table.add_column("", width=2)
+    table.add_column("#", style="dim", width=4)
+    table.add_column("Name", style="bold")
+    table.add_column("Description")
+
+    for idx, profile in enumerate(profiles):
+        marker = "➤" if idx == current_index else ("•" if profile.name == current_name else " ")
+        table.add_row(marker, str(idx + 1), profile.name, profile.description)
+
+    console.print(table)
+    console.print(
+        "[dim]Controls: ↑/↓ or j/k to move (live preview), Enter to confirm, q to cancel[/dim]"
+    )
+    if status_message:
+        style = "green" if status_ok else "yellow"
+        console.print(f"[{style}]{status_message}[/{style}]")
+
+
+def _read_switch_action() -> str:
+    """Read one keyboard action for interactive profile switching."""
+    char = click.getchar()
+    if char in ("\r", "\n"):
+        return "apply"
+    if char in ("q", "Q"):
+        return "cancel"
+    if char in ("k", "K"):
+        return "up"
+    if char in ("j", "J"):
+        return "down"
+    if char in ("\x1b[A",):
+        return "up"
+    if char in ("\x1b[B",):
+        return "down"
+    if char == "\x1b":
+        seq1 = click.getchar()
+        seq2 = click.getchar()
+        if seq1 == "[" and seq2 == "A":
+            return "up"
+        if seq1 == "[" and seq2 == "B":
+            return "down"
+        return "noop"
+    return "noop"
+
+
+def _choose_profile_interactively(
+    profiles: list[Profile],
+    current_name: str | None,
+    on_preview: Callable[[Profile], tuple[bool, str]] | None = None,
+) -> Profile | None:
+    """Return a user-selected profile via keyboard-driven interactive UI."""
+    if not profiles:
+        return None
+
+    if current_name:
+        current_index = next(
+            (idx for idx, profile in enumerate(profiles) if profile.name == current_name),
+            0,
+        )
+    else:
+        current_index = 0
+
+    status_ok = True
+    status_message: str | None = None
+    while True:
+        console.clear()
+        _render_switch_table(
+            profiles,
+            current_index,
+            current_name,
+            status_ok=status_ok,
+            status_message=status_message,
+        )
+        action = _read_switch_action()
+        if action == "up":
+            current_index = (current_index - 1) % len(profiles)
+            if on_preview:
+                status_ok, status_message = on_preview(profiles[current_index])
+        elif action == "down":
+            current_index = (current_index + 1) % len(profiles)
+            if on_preview:
+                status_ok, status_message = on_preview(profiles[current_index])
+        elif action == "apply":
+            console.clear()
+            return profiles[current_index]
+        elif action == "cancel":
+            console.clear()
+            return None
 
 
 @click.group(invoke_without_command=True)
@@ -70,6 +179,60 @@ def use_cmd(name: str, no_reload: bool) -> None:
         ok, msg = reload_ghostty()
         style = "green" if ok else "yellow"
         console.print(f"[{style}]{msg}[/{style}]")
+
+
+@cli.command("switch")
+@click.option("--no-reload", is_flag=True, help="Don't auto-reload Ghostty config.")
+def switch_cmd(no_reload: bool) -> None:
+    """Interactive profile picker with immediate apply."""
+    profiles = list_profiles()
+    if not profiles:
+        console.print("[yellow]No profiles found.[/yellow]")
+        return
+
+    current = get_current_profile()
+    current_profile = get_profile(current) if current else None
+    previewed_name = current
+
+    def _preview(profile: Profile) -> tuple[bool, str]:
+        nonlocal previewed_name
+        apply_profile(profile)
+        previewed_name = profile.name
+        if no_reload:
+            return True, f"Previewing: {profile.name}"
+        ok, msg = reload_ghostty()
+        return ok, f"Previewing {profile.name}: {msg}"
+
+    selected = _choose_profile_interactively(
+        profiles,
+        current_name=current,
+        on_preview=_preview,
+    )
+    if not selected:
+        if previewed_name != current and current_profile:
+            apply_profile(current_profile)
+            console.print(
+                f"[yellow]Cancelled.[/yellow] Reverted to: [bold]{current_profile.name}[/bold]"
+            )
+            if not no_reload:
+                ok, msg = reload_ghostty()
+                style = "green" if ok else "yellow"
+                console.print(f"[{style}]{msg}[/{style}]")
+            return
+        console.print("[yellow]Cancelled.[/yellow]")
+        return
+
+    if previewed_name != selected.name:
+        apply_profile(selected)
+    console.print(f"[green]Switched to:[/green] [bold]{selected.name}[/bold]")
+
+    if not no_reload:
+        if previewed_name == selected.name:
+            console.print("[green]Preview already active.[/green]")
+        else:
+            ok, msg = reload_ghostty()
+            style = "green" if ok else "yellow"
+            console.print(f"[{style}]{msg}[/{style}]")
 
 
 @cli.command("preview")

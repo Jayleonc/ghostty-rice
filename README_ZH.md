@@ -104,6 +104,9 @@ rice list
 # 切换方案（自动重载 Ghostty）
 rice use "Catppuccin Mocha"
 
+# 交互式切换（方向键 + 回车）
+rice switch
+
 # 预览方案（不切换）
 rice preview "Cyber"
 

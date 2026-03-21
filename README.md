@@ -102,6 +102,9 @@ rice list
 # Switch profile (auto-reloads Ghostty)
 rice use "Catppuccin Mocha"
 
+# Interactive switcher (arrow keys + Enter)
+rice switch
+
 # Preview without switching
 rice preview "Cyber"
 
