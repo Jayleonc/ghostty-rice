@@ -9,6 +9,7 @@ from rich.console import Console
 from rich.table import Table
 
 from ghostty_rice import __version__
+from ghostty_rice.colors import show_all_colors, show_profile_colors
 from ghostty_rice.paths import ghostty_config_dir, ghostty_config_file, user_profiles_dir
 from ghostty_rice.platform import get_platform
 from ghostty_rice.preview import preview_profile
@@ -119,6 +120,37 @@ def current_cmd() -> None:
         console.print(f"[bold]{current}[/bold]")
     else:
         console.print("[yellow]No profile active.[/yellow]")
+
+
+@cli.command("colors")
+@click.argument("name", required=False)
+@click.option("--all", "show_all", is_flag=True, help="Compare colors across all profiles.")
+def colors_cmd(name: str | None, show_all: bool) -> None:
+    """Show color palette for a profile (or compare all)."""
+    if show_all:
+        profiles = list_profiles()
+        if not profiles:
+            console.print("[yellow]No profiles found.[/yellow]")
+            return
+        show_all_colors(profiles, console)
+        return
+
+    if name:
+        profile = get_profile(name)
+        if not profile:
+            console.print(f"[red]Profile '{name}' not found.[/red]")
+            raise SystemExit(1)
+    else:
+        current = get_current_profile()
+        if not current:
+            console.print("[yellow]No active profile. Specify a name or use --all.[/yellow]")
+            raise SystemExit(1)
+        profile = get_profile(current)
+        if not profile:
+            console.print(f"[red]Active profile '{current}' not found.[/red]")
+            raise SystemExit(1)
+
+    show_profile_colors(profile, console)
 
 
 @cli.command("doctor")
