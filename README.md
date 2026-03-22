@@ -99,7 +99,7 @@ pip install -e .
 # List available profiles
 rice list
 
-# Full switcher (themes + controls, live preview; Tab / hjkl / arrows)
+# Rice Studio (Themes / Appearance / Fonts / Prompt — 4-tab live preview)
 rice switch
 
 # Interactive font studio (quality fonts only, +/- to resize live)
@@ -184,7 +184,7 @@ source ~/.zshrc
 ```
 
 After that, changing preset via `rice prompt` or `rice switch` is applied on the next prompt automatically in Ghostty zsh.
-The bootstrap also sets a subtle default for `zsh-autosuggestions` (`fg=238`) and exports `COLORTERM=truecolor`.
+The bootstrap also sets a subtle default for `zsh-autosuggestions` (`fg=#555555`, theme-safe hex) and exports `COLORTERM=truecolor`.
 
 If you use Oh My Zsh / Starship / Powerlevel10k, keep the rice bootstrap near the end of `~/.zshrc` so it takes effect after other prompt initializers.
 

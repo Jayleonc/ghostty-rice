@@ -101,7 +101,7 @@ pip install -e .
 # 查看所有可用方案
 rice list
 
-# 全功能 switch（主题 + 控制项，实时预览；Tab / hjkl / 方向键）
+# Rice Studio（主题 / 外观 / 字体 / Prompt — 4 标签页实时预览）
 rice switch
 
 # 交互式字体工作台（高质量字体筛选，+/- 可实时调字号）
@@ -186,7 +186,7 @@ source ~/.zshrc
 ```
 
 之后再执行 `rice prompt` 或 `rice switch`，在 Ghostty 的 zsh 会话里会在下一次提示符自动生效。
-同时会给 `zsh-autosuggestions` 设置更柔和的默认灰度（`fg=238`），并导出 `COLORTERM=truecolor`。
+同时会给 `zsh-autosuggestions` 设置更柔和的灰色（`fg=#555555`，不受主题调色盘影响），并导出 `COLORTERM=truecolor`。
 
 如果你用了 Oh My Zsh / Starship / Powerlevel10k，请把 rice 的 bootstrap 放在 `~/.zshrc` 靠后位置，确保在其它 Prompt 初始化之后生效。
 
