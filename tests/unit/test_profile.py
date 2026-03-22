@@ -11,7 +11,10 @@ from ghostty_rice.profile import (
     _extract_base_config,
     _scan_profiles,
     _upsert_base_settings,
+    fix_config_issues,
+    reset_to_profile,
     update_base_settings,
+    validate_config,
 )
 
 
@@ -147,3 +150,103 @@ def test_update_base_settings_preserves_active_profile(tmp_path: Path) -> None:
     written = config_path.read_text()
     assert "font-size = 13" in written
     assert "# --- Profile: Demo ---" in written
+
+
+def test_validate_config_detects_invalid_theme(tmp_path: Path) -> None:
+    config = tmp_path / "config"
+    config.write_text("theme = Tokyo Night\nbackground-opacity = 0.9\n")
+
+    # Create a fake theme directory with valid themes
+    themes_dir = tmp_path / "themes"
+    themes_dir.mkdir()
+    (themes_dir / "TokyoNight Storm").write_text("")
+    (themes_dir / "Catppuccin Mocha").write_text("")
+
+    with (
+        patch("ghostty_rice.profile.ghostty_config_file", return_value=config),
+        patch(
+            "ghostty_rice.profile._ghostty_theme_dirs",
+            return_value=[themes_dir],
+        ),
+    ):
+        issues = validate_config()
+
+    assert len(issues) == 1
+    assert issues[0].key == "theme"
+    assert issues[0].value == "Tokyo Night"
+
+
+def test_validate_config_passes_valid_theme(tmp_path: Path) -> None:
+    config = tmp_path / "config"
+    config.write_text("theme = TokyoNight Storm\n")
+
+    themes_dir = tmp_path / "themes"
+    themes_dir.mkdir()
+    (themes_dir / "TokyoNight Storm").write_text("")
+
+    with (
+        patch("ghostty_rice.profile.ghostty_config_file", return_value=config),
+        patch(
+            "ghostty_rice.profile._ghostty_theme_dirs",
+            return_value=[themes_dir],
+        ),
+    ):
+        issues = validate_config()
+
+    assert len(issues) == 0
+
+
+def test_fix_config_issues_removes_invalid_theme(tmp_path: Path) -> None:
+    config = tmp_path / "config"
+    config.write_text(
+        "shell-integration = detect\ntheme = Tokyo Night\nbackground-opacity = 0.9\n"
+    )
+
+    from ghostty_rice.profile import ConfigIssue
+
+    issues = [ConfigIssue(key="theme", value="Tokyo Night", message="not found")]
+
+    with patch("ghostty_rice.profile.ghostty_config_file", return_value=config):
+        actions = fix_config_issues(issues)
+
+    assert len(actions) == 1
+    assert "Tokyo Night" in actions[0]
+    content = config.read_text()
+    assert "theme = Tokyo Night" not in content
+    assert "shell-integration = detect" in content
+    assert "background-opacity = 0.9" in content
+
+
+def test_reset_to_profile_applies_profile(tmp_path: Path) -> None:
+    config = tmp_path / "config"
+    config.write_text("theme = BROKEN\n")
+
+    profile_dir = tmp_path / "presets"
+    profile_dir.mkdir()
+    (profile_dir / "Catppuccin Mocha").write_text("theme = Catppuccin Mocha\n")
+    (profile_dir / "manifest.toml").write_text(
+        '[profiles."Catppuccin Mocha"]\ndescription = "test"\nauthor = "t"\n'
+    )
+
+    with (
+        patch("ghostty_rice.profile.ghostty_config_file", return_value=config),
+        patch("ghostty_rice.profile.bundled_presets_dir", return_value=profile_dir),
+        patch("ghostty_rice.profile.user_profiles_dir", return_value=tmp_path / "empty"),
+    ):
+        ok, msg = reset_to_profile("Catppuccin Mocha")
+
+    assert ok
+    content = config.read_text()
+    assert "rice-profile: Catppuccin Mocha" in content
+    assert "theme = Catppuccin Mocha" in content
+
+
+def test_reset_to_profile_fails_for_unknown() -> None:
+    with (
+        patch("ghostty_rice.profile.list_profiles", return_value=[]),
+        patch("ghostty_rice.profile.get_profile", return_value=None),
+    ):
+        ok, msg = reset_to_profile("Nonexistent")
+
+    assert not ok
+    assert "not found" in msg

@@ -113,10 +113,13 @@ rice prompt --install
 # 预览方案（不切换）
 rice preview "Cyber"
 
-# 一键检查环境
+# 一键检查环境（验证配置、检测无效主题引用）
 rice doctor
-# 一键修复常见兼容问题（推荐执行一次，macOS 的 Vim/Neovim terminfo）
+# 自动修复（terminfo、无效主题行等）
 rice doctor --fix
+
+# 配置损坏时一键恢复到安全方案
+rice reset "Catppuccin Mocha"
 
 # 查看当前方案
 rice current
@@ -234,14 +237,17 @@ tags = ["dark", "custom"]
 rice switch    # 然后选中 "My Theme"
 ```
 
-## 环境诊断
+## 环境诊断与修复
 
 ```bash
-rice doctor
+rice doctor          # 全面检查：安装状态、配置文件、无效主题引用
+rice doctor --fix    # 自动修复：terminfo、无效主题行等
+rice reset "Codex"   # 配置损坏时一键恢复到安全方案
 ```
 
-一键检查：Ghostty 安装状态、版本号、运行状态、自动化权限、`xterm-ghostty` terminfo、配置目录、方案加载情况。
-如果 Vim/Neovim 颜色或按键表现不对，执行一次 `rice doctor --fix`。
+`rice doctor` 一键检查：Ghostty 安装状态、版本号、运行状态、自动化权限、`xterm-ghostty` terminfo、配置目录、方案加载情况，以及**验证配置中的主题引用是否有效**。
+
+如果配置损坏（如 Ghostty 弹出 "theme not found"），`rice doctor --fix` 会移除无效行，`rice reset` 可以一键切换到正常的内置方案。
 
 ## 工作原理
 

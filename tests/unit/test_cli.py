@@ -288,6 +288,31 @@ def test_cli_switch_uses_full_control_mode_by_default() -> None:
     mock_run.assert_called_once_with(False)
 
 
+def test_cli_reset_command() -> None:
+    runner = CliRunner()
+    with (
+        patch("ghostty_rice.cli.reset_to_profile", return_value=(True, 'Config reset to "Codex"')),
+        patch("ghostty_rice.cli.reload_ghostty", return_value=(True, "Config reloaded.")),
+    ):
+        result = runner.invoke(cli, ["reset", "Codex"])
+
+    assert result.exit_code == 0
+    assert "Config reset" in result.output
+    assert "Codex" in result.output
+
+
+def test_cli_reset_command_unknown_profile() -> None:
+    runner = CliRunner()
+    with patch(
+        "ghostty_rice.cli.reset_to_profile",
+        return_value=(False, 'Profile "Foo" not found.'),
+    ):
+        result = runner.invoke(cli, ["reset", "Foo"])
+
+    assert result.exit_code == 1
+    assert "not found" in result.output
+
+
 def test_cli_prompt_command_requires_zsh() -> None:
     runner = CliRunner()
 

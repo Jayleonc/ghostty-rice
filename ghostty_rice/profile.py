@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import platform as _platform
 import re
 import sys
 from dataclasses import dataclass, field
@@ -194,3 +195,124 @@ def update_base_settings(settings: dict[str, str]) -> None:
 
     config_path.parent.mkdir(parents=True, exist_ok=True)
     config_path.write_text(content)
+
+
+# ---------------------------------------------------------------------------
+# Config validation & repair
+# ---------------------------------------------------------------------------
+
+_THEME_RE = re.compile(r"^\s*theme\s*=\s*(.+)$", re.MULTILINE)
+
+
+def _ghostty_theme_dirs() -> list[Path]:
+    """Return directories where Ghostty themes can be found."""
+    dirs: list[Path] = []
+    if _platform.system() == "Darwin":
+        bundled = Path(
+            "/Applications/Ghostty.app/Contents/Resources/ghostty/themes"
+        )
+        if bundled.is_dir():
+            dirs.append(bundled)
+    from ghostty_rice.paths import ghostty_config_dir as _config_dir
+
+    user_themes = _config_dir() / "themes"
+    if user_themes.is_dir():
+        dirs.append(user_themes)
+    return dirs
+
+
+def _available_ghostty_themes() -> set[str]:
+    """Return the set of theme names Ghostty can resolve."""
+    names: set[str] = set()
+    for d in _ghostty_theme_dirs():
+        for f in d.iterdir():
+            if f.is_file() and not f.name.startswith("."):
+                names.add(f.name)
+    return names
+
+
+@dataclass
+class ConfigIssue:
+    """A single config validation issue."""
+
+    key: str
+    value: str
+    message: str
+    fixable: bool = True
+
+
+def validate_config() -> list[ConfigIssue]:
+    """Check the current Ghostty config for common issues."""
+    config_path = ghostty_config_file()
+    if not config_path.exists():
+        return []
+
+    text = config_path.read_text()
+    issues: list[ConfigIssue] = []
+
+    # Check theme references
+    available = _available_ghostty_themes()
+    if available:
+        for m in _THEME_RE.finditer(text):
+            theme_name = m.group(1).strip()
+            if theme_name not in available:
+                issues.append(
+                    ConfigIssue(
+                        key="theme",
+                        value=theme_name,
+                        message=(
+                            f'theme "{theme_name}" not found in Ghostty'
+                        ),
+                    )
+                )
+
+    return issues
+
+
+def fix_config_issues(issues: list[ConfigIssue]) -> list[str]:
+    """Attempt to fix config issues. Returns list of actions taken."""
+    config_path = ghostty_config_file()
+    if not config_path.exists() or not issues:
+        return []
+
+    text = config_path.read_text()
+    actions: list[str] = []
+
+    for issue in issues:
+        if not issue.fixable:
+            continue
+        if issue.key == "theme":
+            # Remove the invalid theme line — Ghostty will use defaults
+            pattern = re.compile(
+                rf"^\s*theme\s*=\s*{re.escape(issue.value)}\s*$",
+                re.MULTILINE,
+            )
+            new_text = pattern.sub("", text)
+            if new_text != text:
+                text = new_text
+                actions.append(
+                    f'Removed invalid theme = {issue.value}'
+                )
+
+    if actions:
+        # Clean up consecutive blank lines left by removals
+        text = re.sub(r"\n{3,}", "\n\n", text)
+        config_path.write_text(text)
+
+    return actions
+
+
+def reset_to_profile(name: str) -> tuple[bool, str]:
+    """Reset config to a known-good builtin profile, preserving base settings.
+
+    Returns (success, message).
+    """
+    profile = get_profile(name)
+    if profile is None:
+        available = [p.name for p in list_profiles()]
+        return False, (
+            f'Profile "{name}" not found. '
+            f"Available: {', '.join(available)}"
+        )
+    apply_profile(profile)
+    return True, f'Config reset to "{name}"'

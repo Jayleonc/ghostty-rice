@@ -111,10 +111,13 @@ rice prompt --install
 # Preview without switching
 rice preview "Cyber"
 
-# Check setup
+# Check setup (validates config, detects invalid theme references)
 rice doctor
-# Install safe fixes (recommended once, macOS terminfo for Vim/Neovim)
+# Auto-fix issues (terminfo, invalid theme lines, etc.)
 rice doctor --fix
+
+# Reset to a known-good profile if config is broken
+rice reset "Catppuccin Mocha"
 
 # See current profile
 rice current
@@ -232,14 +235,17 @@ tags = ["dark", "custom"]
 rice switch    # then pick "My Theme"
 ```
 
-## Diagnostics
+## Diagnostics & Recovery
 
 ```bash
-rice doctor
+rice doctor          # Check everything: installation, config, theme references
+rice doctor --fix    # Auto-fix: terminfo, invalid theme lines, etc.
+rice reset "Codex"   # One-click recovery to any builtin profile
 ```
 
-Checks Ghostty installation, version, running state, automation permissions, `xterm-ghostty` terminfo, config directory, and profile status in one command.
-If Vim/Neovim colors or key behavior look wrong, run `rice doctor --fix` once.
+`rice doctor` checks Ghostty installation, version, running state, automation permissions, `xterm-ghostty` terminfo, config directory, profile status, and **validates config for invalid theme references**.
+
+If your config is broken (e.g. Ghostty shows "theme not found"), `rice doctor --fix` removes invalid lines, and `rice reset` switches to a known-good profile.
 
 ## How It Works
 

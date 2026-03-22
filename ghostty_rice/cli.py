@@ -33,9 +33,12 @@ from ghostty_rice.preview import preview_profile
 from ghostty_rice.profile import (
     Profile,
     apply_profile,
+    fix_config_issues,
     get_current_profile,
     get_profile,
     list_profiles,
+    reset_to_profile,
+    validate_config,
 )
 from ghostty_rice.prompt import (
     PromptPreset,
@@ -1376,6 +1379,43 @@ def current_cmd() -> None:
         console.print("[yellow]No profile active.[/yellow]")
 
 
+@cli.command("reset")
+@click.argument("name", required=False)
+@click.option(
+    "--no-reload",
+    is_flag=True,
+    help="Skip Ghostty reload after reset.",
+)
+def reset_cmd(name: str | None, no_reload: bool) -> None:
+    """Reset config to a known-good builtin profile.
+
+    If NAME is omitted, lists available profiles and prompts you to pick one.
+    Preserves base settings (shell, keybinds) and replaces the visual profile.
+    """
+    profiles = list_profiles()
+    if not profiles:
+        console.print("[red]No profiles found.[/red]")
+        raise SystemExit(1)
+
+    if name is None:
+        console.print("[bold]Available profiles:[/bold]")
+        for p in profiles:
+            tag = " [dim](current)[/dim]" if p.name == get_current_profile() else ""
+            console.print(f"  {p.name}{tag}")
+        console.print()
+        name = click.prompt("Reset to", type=str)
+
+    ok, msg = reset_to_profile(name)
+    if not ok:
+        console.print(f"[red]{msg}[/red]")
+        raise SystemExit(1)
+
+    console.print(f"[green]{msg}[/green]")
+    if not no_reload:
+        ok_reload, reload_msg = reload_ghostty()
+        console.print(reload_msg)
+
+
 @cli.command("colors")
 @click.argument("name", required=False)
 @click.option("--all", "show_all", is_flag=True, help="Compare colors across all profiles.")
@@ -1411,15 +1451,19 @@ def colors_cmd(name: str | None, show_all: bool) -> None:
 @click.option(
     "--fix",
     is_flag=True,
-    help="Apply safe fixes (currently installs xterm-ghostty terminfo on macOS).",
+    help="Apply safe fixes (terminfo, invalid theme references, etc.).",
 )
 def doctor_cmd(fix: bool) -> None:
     """Check Ghostty installation, permissions, and runtime status."""
+    from ghostty_rice.platform import DiagnosticCheck
     from ghostty_rice.profile import list_profiles as _list_profiles
 
-    fix_note: tuple[bool, str] | None = None
+    fix_actions: list[str] = []
+
+    # Terminfo fix
     if fix and not has_xterm_ghostty_terminfo():
-        fix_note = install_xterm_ghostty_terminfo()
+        ok, msg = install_xterm_ghostty_terminfo()
+        fix_actions.append(msg)
 
     plat = get_platform()
     checks = plat.run_diagnostics()
@@ -1431,7 +1475,7 @@ def doctor_cmd(fix: bool) -> None:
     current = get_current_profile()
 
     checks.append(
-        type(checks[0])(
+        DiagnosticCheck(
             name="Config directory",
             passed=config_dir.exists(),
             message=str(config_dir),
@@ -1439,7 +1483,7 @@ def doctor_cmd(fix: bool) -> None:
         )
     )
     checks.append(
-        type(checks[0])(
+        DiagnosticCheck(
             name="Config file",
             passed=config_file.exists(),
             message=str(config_file) if config_file.exists() else "Not found",
@@ -1447,24 +1491,52 @@ def doctor_cmd(fix: bool) -> None:
         )
     )
     checks.append(
-        type(checks[0])(
+        DiagnosticCheck(
             name="Profiles available",
             passed=len(profiles) > 0,
             message=str(len(profiles)),
         )
     )
     checks.append(
-        type(checks[0])(
+        DiagnosticCheck(
             name="Active profile",
             passed=current is not None,
             message=current or "None",
             hint="Run `rice switch` to activate one" if not current else "",
         )
     )
+
+    # Config validation — check for invalid theme references
+    config_issues = validate_config()
+    if config_issues:
+        for issue in config_issues:
+            checks.append(
+                DiagnosticCheck(
+                    name="Config validation",
+                    passed=False,
+                    message=issue.message,
+                    hint=(
+                        "Run `rice doctor --fix` to remove invalid lines, "
+                        "or `rice reset` to switch to a safe profile"
+                    ),
+                )
+            )
+        if fix:
+            actions = fix_config_issues(config_issues)
+            fix_actions.extend(actions)
+    else:
+        checks.append(
+            DiagnosticCheck(
+                name="Config validation",
+                passed=True,
+                message="No issues found",
+            )
+        )
+
     shell_name = detected_shell_name()
     zsh_ok = zsh_available()
     checks.append(
-        type(checks[0])(
+        DiagnosticCheck(
             name="Prompt shell support",
             passed=zsh_ok,
             message=f"Current shell: {shell_name}",
@@ -1483,10 +1555,9 @@ def doctor_cmd(fix: bool) -> None:
     console.print("[bold]ghostty-rice doctor[/bold]")
     console.print()
 
-    if fix_note:
-        ok, msg = fix_note
-        style = "green" if ok else "yellow"
-        console.print(f"  [{style}]fix[/{style}]  {msg}")
+    if fix_actions:
+        for action in fix_actions:
+            console.print(f"  [green]fix[/green]  {action}")
         console.print()
 
     all_passed = True
@@ -1502,7 +1573,12 @@ def doctor_cmd(fix: bool) -> None:
             console.print(f"       [dim]{check.hint}[/dim]")
 
     console.print()
-    if all_passed:
+    if fix_actions:
+        console.print(
+            "[green]Fixes applied.[/green] "
+            "Run `rice reset \"Catppuccin Mocha\"` to switch to a safe profile."
+        )
+    elif all_passed:
         console.print("[green]All checks passed.[/green]")
     else:
         console.print("[yellow]Some checks need attention.[/yellow]")
