@@ -124,16 +124,16 @@ rice current
 
 | Profile | Style |
 |---------|-------|
-| **Catppuccin Mocha** | Warm, cozy, the most popular dev palette |
-| **One Dark Pro** | High-adoption baseline with balanced contrast |
-| **Codex** | Graphite dark, warm accent, muted low-glare text |
-| **Everforest** | Soft woodland palette for long low-fatigue sessions |
-| **Cyber** | High transparency, hidden chrome, holographic icon |
-| **Minimal** | No chrome, no blur, just code |
-| **Frosted** | macOS native frosted glass, light mode |
-| **Nord** | Arctic, north-bluish palette — calm and focused |
-| **Gruvbox** | Retro groove with warm, earthy tones |
-| **Dracula** | Iconic dark theme with vibrant purple and pink |
+| **Catppuccin Mocha** | Late-night café warmth — fully opaque, steady bar cursor, cozy |
+| **One Dark Pro** | Studio baseline — high-adoption One Dark family, stable contrast |
+| **Codex** | Graphite focus — Codex-like dark chrome, warm accent, low-glare text |
+| **Everforest** | Soft woodland dark — muted contrast for long sessions |
+| **Cyber** | Blade Runner HUD — translucent glass on neon wallpapers, hidden chrome |
+| **Minimal** | The typewriter — zero decoration, generous margins, Dieter Rams simplicity |
+| **Frosted** | Morning studio — frosted light mode with deeper ink and near-opaque glass |
+| **Nord** | Scandinavian clarity — fully opaque cool precision, Arrival-grade calm |
+| **Gruvbox** | Analog warmth — fully opaque, earth tones, Wes Anderson palette |
+| **Dracula** | Gothic cinema — fully opaque purple-grey, bold accents, Tim Burton drama |
 
 ## Rice Switch
 
