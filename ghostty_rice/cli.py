@@ -780,7 +780,10 @@ def _run_studio_interactively(
         theme_indices = _filter_indices_by_name(
             [theme.name for theme in themes], ui.theme_filter,
         )
-        ui.theme_cursor = max(0, min(ui.theme_cursor, len(theme_indices) - 1)) if theme_indices else 0
+        if theme_indices:
+            ui.theme_cursor = min(ui.theme_cursor, len(theme_indices) - 1)
+        else:
+            ui.theme_cursor = 0
         font_name_list = [f"{p.name} {_font_family_from_preset(p)}" for p in fonts]
         font_indices = _filter_indices_by_name(font_name_list, ui.font_filter)
         ui.font_cursor = max(0, min(ui.font_cursor, len(font_indices) - 1)) if font_indices else 0
@@ -1190,7 +1193,8 @@ def _run_theme_studio(no_reload: bool) -> None:
             source="user",
             path=path,
         )
-        apply_font_preset(_preset_with_size(fonts[current_state.font_index], current_state.font_size))
+        font = _preset_with_size(fonts[current_state.font_index], current_state.font_size)
+        apply_font_preset(font)
         apply_profile(profile)
         preview_signature = signature
         if no_reload:
