@@ -29,7 +29,6 @@ palette = 8=#647089
 # --- Window ---
 # The glass IS the aesthetic. 0.85 is the floor for readability —
 # below this, text becomes a struggle in any lighting condition.
-# minimum-contrast will rescue individual characters if needed.
 background-opacity = 0.90
 background-blur = macos-glass-clear
 window-padding-x = 20
@@ -57,4 +56,3 @@ unfocused-split-opacity = 0.65
 
 # --- Accessibility ---
 # Bumped to 5.0 to compensate for the transparency.
-minimum-contrast = 5.0

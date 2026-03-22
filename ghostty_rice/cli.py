@@ -63,7 +63,6 @@ from ghostty_rice.studio import (
 
 console = Console()
 _PREVIEW_MIN_INTERVAL = 0.12
-_STUDIO_CONTRAST_VALUES = [45, 50, 55, 60, 65, 70, 75]
 _STUDIO_MIN_FONT_SIZE = 10.0
 _STUDIO_MAX_FONT_SIZE = 18.0
 _STUDIO_FONT_STEP = 0.5
@@ -78,7 +77,6 @@ class _StudioState:
     foreground_index: int
     font_index: int
     font_size: float
-    contrast_index: int
     translucent: bool
     prompt_index: int = 0
 
@@ -451,7 +449,7 @@ def _restore_config_snapshot(existed: bool, content: str) -> None:
         config_path.unlink()
 
 
-_APPEARANCE_ROW_COUNT = 5
+_APPEARANCE_ROW_COUNT = 4
 
 
 def _filter_indices_by_name(names: list[str], query: str) -> list[int]:
@@ -528,7 +526,6 @@ def _render_studio_panel(
             ("Accent", accents[state.accent_index], None),
             ("Background", backgrounds[state.background_index], None),
             ("Foreground", foregrounds[state.foreground_index], None),
-            ("Contrast", None, None),
             ("Translucent", None, state.translucent),
         ]
         for i, (label, color_hex, toggle_val) in enumerate(appearance_data):
@@ -548,10 +545,6 @@ def _render_studio_panel(
                     line.append("● On", style="green")
                 else:
                     line.append("○ Off", style="dim")
-            else:
-                contrast_val = str(_STUDIO_CONTRAST_VALUES[state.contrast_index])
-                line.append(contrast_val, style="bold" if i == ui.appearance_cursor else "")
-                line.append("    ◀ ▶", style="dim")
             content_lines.append(line)
 
     elif ui.tab == 2:
@@ -647,11 +640,6 @@ def _font_family_from_preset(preset: FontPreset) -> str:
     return preset.settings.get("font-family", "").strip('"')
 
 
-def _closest_contrast_index(value: int) -> int:
-    return min(
-        range(len(_STUDIO_CONTRAST_VALUES)),
-        key=lambda idx: abs(_STUDIO_CONTRAST_VALUES[idx] - value),
-    )
 
 
 def _apply_theme_defaults(
@@ -667,7 +655,6 @@ def _apply_theme_defaults(
     state.background_index = _index_of_color(backgrounds, theme.background)
     state.foreground_index = _index_of_color(foregrounds, theme.foreground)
     state.translucent = theme.translucent
-    state.contrast_index = _closest_contrast_index(theme.contrast)
 
 
 def _adjust_appearance_state(
@@ -689,11 +676,6 @@ def _adjust_appearance_state(
         state.foreground_index = _row_cycle_index(state.foreground_index, delta, len(foregrounds))
         return True
     if row == 3:
-        state.contrast_index = _row_cycle_index(
-            state.contrast_index, delta, len(_STUDIO_CONTRAST_VALUES)
-        )
-        return True
-    if row == 4:
         state.translucent = not state.translucent
         return True
     return False
@@ -707,7 +689,7 @@ def _studio_profile_signature(
     backgrounds: list[str],
     foregrounds: list[str],
     fonts: list[FontPreset],
-) -> tuple[str, str, str, str, str, str, int, bool]:
+) -> tuple[str, str, str, str, str, str, bool]:
     return (
         themes[state.theme_index].name,
         accents[state.accent_index],
@@ -715,7 +697,6 @@ def _studio_profile_signature(
         foregrounds[state.foreground_index],
         _font_family_from_preset(fonts[state.font_index]),
         _format_font_size(state.font_size),
-        _STUDIO_CONTRAST_VALUES[state.contrast_index],
         state.translucent,
     )
 
@@ -735,7 +716,6 @@ def _build_studio_profile_body_from_state(
         background=backgrounds[state.background_index],
         foreground=foregrounds[state.foreground_index],
         translucent=state.translucent,
-        contrast=_STUDIO_CONTRAST_VALUES[state.contrast_index],
     )
 
 
@@ -1149,7 +1129,6 @@ def _run_theme_studio(no_reload: bool) -> None:
         foreground_index=0,
         font_index=font_index,
         font_size=max(_STUDIO_MIN_FONT_SIZE, min(_STUDIO_MAX_FONT_SIZE, initial_size)),
-        contrast_index=0,
         translucent=False,
         prompt_index=prompt_index,
     )
@@ -1161,7 +1140,7 @@ def _run_theme_studio(no_reload: bool) -> None:
         foregrounds=foregrounds,
     )
 
-    preview_signature: tuple[str, str, str, str, str, str, int, bool] | None = None
+    preview_signature: tuple[str, str, str, str, str, str, bool] | None = None
     preview_reload_pending = False
     last_preview_reload = 0.0
 
@@ -1270,7 +1249,7 @@ def _run_theme_studio(no_reload: bool) -> None:
         "[green]Switch applied:[/green] "
         f"[bold]{final_signature[0]}[/bold] "
         f"[dim]font={final_signature[4]} size={final_signature[5]} "
-        f"contrast={final_signature[6]} prompt={prompt_name}[/dim]"
+        f"translucent={'on' if final_signature[6] else 'off'} prompt={prompt_name}[/dim]"
     )
     if not no_reload:
         if preview_signature == final_signature and not preview_reload_pending:

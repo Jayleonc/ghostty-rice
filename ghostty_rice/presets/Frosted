@@ -58,4 +58,3 @@ unfocused-split-opacity = 0.85
 # --- Accessibility ---
 # Bumped for light theme: light backgrounds are more sensitive
 # to contrast issues than dark ones.
-minimum-contrast = 6.0

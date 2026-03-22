@@ -50,4 +50,3 @@ cursor-style-blink = false
 unfocused-split-opacity = 0.80
 
 # --- Accessibility ---
-minimum-contrast = 5.5

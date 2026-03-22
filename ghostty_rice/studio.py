@@ -18,7 +18,7 @@ class StudioTheme:
     accent: str
     background: str
     foreground: str
-    contrast: int = 60
+    contrast: int = 60  # legacy, no longer used in generated profiles
     translucent: bool = True
 
 
@@ -230,14 +230,12 @@ def build_studio_profile_body(
     background: str,
     foreground: str,
     translucent: bool,
-    contrast: int,
 ) -> str:
     """Build Ghostty config body for studio selections."""
     accent_hex = _normalize_hex(accent)
     background_hex = _normalize_hex(background)
     foreground_hex = _normalize_hex(foreground)
     selection_background = _blend_hex(accent_hex, background_hex, 0.35)
-    minimum_contrast = max(3.5, min(7.0, contrast / 10.0))
     opacity = "0.96" if translucent else "1.0"
 
     lines: list[str] = []
@@ -250,7 +248,6 @@ def build_studio_profile_body(
             f"cursor-color = {accent_hex}",
             f"selection-background = {selection_background}",
             f"selection-foreground = {foreground_hex}",
-            f"minimum-contrast = {minimum_contrast:.1f}",
             f"background-opacity = {opacity}",
             "window-padding-x = 14",
             "window-padding-y = 10",

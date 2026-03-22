@@ -29,12 +29,11 @@ def test_build_studio_profile_body_contains_expected_fields() -> None:
         background="#2D2D2B",
         foreground="#F9F9F7",
         translucent=True,
-        contrast=60,
     )
     assert "background = #2D2D2B" in body
     assert "foreground = #F9F9F7" in body
     assert "cursor-color = #CC7D5E" in body
-    assert "minimum-contrast = 6.0" in body
+    assert "minimum-contrast" not in body
     assert "background-opacity = 0.96" in body
     assert "background-blur = macos-glass-regular" in body
 
@@ -47,11 +46,10 @@ def test_build_studio_profile_body_disables_blur_when_not_translucent() -> None:
         background="#2D2D2B",
         foreground="#F9F9F7",
         translucent=False,
-        contrast=55,
     )
     assert "background-opacity = 1.0" in body
     assert "background-blur = macos-glass-regular" not in body
-    assert "minimum-contrast = 5.5" in body
+    assert "minimum-contrast" not in body
 
 
 def test_write_studio_profile_writes_under_user_profiles(tmp_path: Path) -> None:

@@ -37,4 +37,3 @@ selection-foreground = #abb2bf
 unfocused-split-opacity = 0.85
 
 # --- Accessibility ---
-minimum-contrast = 5.0

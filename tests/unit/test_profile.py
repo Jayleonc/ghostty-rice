@@ -94,7 +94,7 @@ def test_critical_builtin_theme_names_match_ghostty() -> None:
     assert "theme = Atom One Dark" in one_dark
     assert "foreground = #2e3442" in frosted
     assert "background-opacity = 0.995" in frosted
-    assert "minimum-contrast = 6.0" in frosted
+    assert "minimum-contrast" not in frosted
     assert "background = #2d2d2b" in codex
     assert "palette = 8=#6f7788" in codex
 
