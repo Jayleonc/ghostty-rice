@@ -8,8 +8,10 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 import click
-from rich.console import Console
+from rich.console import Console, Group
+from rich.panel import Panel
 from rich.table import Table
+from rich.text import Text
 
 from ghostty_rice import __version__
 from ghostty_rice.colors import show_all_colors, show_profile_colors
@@ -78,14 +80,16 @@ class _StudioState:
     font_size: float
     contrast_index: int
     translucent: bool
+    prompt_index: int = 0
 
 
 @dataclass
 class _SwitchUiState:
-    tab: int = 0
+    tab: int = 0  # 0=Themes, 1=Appearance, 2=Fonts, 3=Prompt
     theme_cursor: int = 0
-    control_cursor: int = 0
+    appearance_cursor: int = 0
     font_cursor: int = 0
+    prompt_cursor: int = 0
     theme_filter: str = ""
     font_filter: str = ""
 
@@ -136,6 +140,8 @@ def _read_switch_action() -> str:
         return "tab_2"
     if char == "3":
         return "tab_3"
+    if char == "4":
+        return "tab_4"
     if char in ("/", "\x06"):
         return "search"
     if char in ("i", "I"):
@@ -445,29 +451,7 @@ def _restore_config_snapshot(existed: bool, content: str) -> None:
         config_path.unlink()
 
 
-def _studio_rows(
-    state: _StudioState,
-    themes: list[StudioTheme],
-    accents: list[str],
-    backgrounds: list[str],
-    foregrounds: list[str],
-    fonts: list[FontPreset],
-) -> list[tuple[str, str]]:
-    font_family = fonts[state.font_index].settings.get("font-family", "").strip('"')
-    return [
-        ("Accent", _color_chip(accents[state.accent_index])),
-        ("Background", _color_chip(backgrounds[state.background_index])),
-        ("Foreground", _color_chip(foregrounds[state.foreground_index])),
-        ("Code font", font_family),
-        ("Code font size", _format_font_size(state.font_size)),
-        ("Translucent glass", "On" if state.translucent else "Off"),
-        ("Contrast", str(_STUDIO_CONTRAST_VALUES[state.contrast_index])),
-    ]
-
-
-def _color_chip(color: str) -> str:
-    normalized = color.upper()
-    return f"[on {normalized}]  [/on {normalized}] {normalized}"
+_APPEARANCE_ROW_COUNT = 5
 
 
 def _filter_indices_by_name(names: list[str], query: str) -> list[int]:
@@ -477,7 +461,7 @@ def _filter_indices_by_name(names: list[str], query: str) -> list[int]:
     return [idx for idx, name in enumerate(names) if q in name.casefold()]
 
 
-def _render_studio_table(
+def _render_studio_panel(
     state: _StudioState,
     ui: _SwitchUiState,
     themes: list[StudioTheme],
@@ -485,6 +469,7 @@ def _render_studio_table(
     backgrounds: list[str],
     foregrounds: list[str],
     fonts: list[FontPreset],
+    prompts: list[PromptPreset],
     theme_indices: list[int],
     font_indices: list[int],
     status_ok: bool,
@@ -492,77 +477,159 @@ def _render_studio_table(
 ) -> None:
     active_theme = themes[state.theme_index].name
     active_font = _font_family_from_preset(fonts[state.font_index])
-    tabs = (
-        "[bold green]1 Themes[/bold green] | "
-        "[bold green]2 Controls[/bold green] | "
-        "[bold green]3 Fonts[/bold green]"
-    )
-    if ui.tab == 0:
-        tabs = "[reverse] 1 Themes [/reverse] | 2 Controls | 3 Fonts"
-    elif ui.tab == 1:
-        tabs = "1 Themes | [reverse] 2 Controls [/reverse] | 3 Fonts"
-    else:
-        tabs = "1 Themes | 2 Controls | [reverse] 3 Fonts [/reverse]"
 
-    header = (
-        f"[bold]Rice Switch[/bold]  {tabs}\n"
-        f"[dim]Theme:[/dim] {active_theme}    "
-        f"[dim]Font:[/dim] {active_font} {_format_font_size(state.font_size)}"
-    )
-    console.print(header)
+    # ── Tab bar ──
+    tab_labels = ["Themes", "Appearance", "Fonts", "Prompt"]
+    tab_bar = Text("  ")
+    for i, label in enumerate(tab_labels):
+        num = str(i + 1)
+        if i == ui.tab:
+            tab_bar.append(f" {num} {label} ", style="bold reverse")
+        else:
+            tab_bar.append(f" {num} ", style="dim bold")
+            tab_bar.append(f"{label} ", style="dim")
+        tab_bar.append("   ")
+
+    # ── Status line ──
+    status_line = Text("  ")
+    status_line.append("Theme ", style="dim")
+    status_line.append(active_theme, style="bold")
+    status_line.append("    ")
+    status_line.append("Font ", style="dim")
+    status_line.append(f"{active_font} {_format_font_size(state.font_size)}", style="bold")
+
+    # ── Tab content ──
+    content_lines: list[Text] = []
 
     if ui.tab == 0:
-        table = Table(border_style="bright_blue", show_lines=False, title="Themes")
-        table.add_column("", width=2)
-        table.add_column("#", style="dim", width=4)
-        table.add_column("Name", style="bold")
-        table.add_column("Description")
+        if ui.theme_filter:
+            content_lines.append(Text(f"  filter: {ui.theme_filter}", style="yellow"))
         if not theme_indices:
-            table.add_row("", "-", "[dim]No match[/dim]", "[dim]Try another /search[/dim]")
+            content_lines.append(Text("  No match — try another /search", style="dim"))
         for pos, real_idx in enumerate(theme_indices):
             theme = themes[real_idx]
-            marker = "➤" if pos == ui.theme_cursor else ("•" if real_idx == state.theme_index else " ")
-            name = f"[bold]{theme.name}[/bold]" if real_idx == state.theme_index else theme.name
-            table.add_row(marker, str(pos + 1), name, theme.description)
-        if ui.theme_filter:
-            table.caption = f"filter: {ui.theme_filter}"
-        console.print(table)
+            line = Text("  ")
+            if pos == ui.theme_cursor:
+                line.append("➤ ", style="green bold")
+                line.append(f"{theme.name:<20}", style="bold")
+            elif real_idx == state.theme_index:
+                line.append("• ", style="bright_blue")
+                line.append(f"{theme.name:<20}", style="bright_blue")
+            else:
+                line.append("  ")
+                line.append(f"{theme.name:<20}")
+            line.append(theme.description, style="dim")
+            line.append("  ")
+            line.append("██", style=theme.accent)
+            content_lines.append(line)
+
     elif ui.tab == 1:
-        table = Table(border_style="bright_blue", show_lines=False, title="Controls")
-        table.add_column("", width=2)
-        table.add_column("Setting", style="bold", width=20)
-        table.add_column("Value")
-        rows = _studio_rows(state, themes, accents, backgrounds, foregrounds, fonts)
-        for idx, (label, value) in enumerate(rows):
-            marker = "➤" if idx == ui.control_cursor else " "
-            style = "bold" if idx == ui.control_cursor else "none"
-            table.add_row(marker, label, f"[{style}]{value}[/{style}]")
-        console.print(table)
-    else:
-        table = Table(border_style="bright_blue", show_lines=False, title="Fonts")
-        table.add_column("", width=2)
-        table.add_column("#", style="dim", width=4)
-        table.add_column("Preset", style="bold")
-        table.add_column("Family")
+        appearance_data: list[tuple[str, str | None, bool | None]] = [
+            ("Accent", accents[state.accent_index], None),
+            ("Background", backgrounds[state.background_index], None),
+            ("Foreground", foregrounds[state.foreground_index], None),
+            ("Contrast", None, None),
+            ("Translucent", None, state.translucent),
+        ]
+        for i, (label, color_hex, toggle_val) in enumerate(appearance_data):
+            line = Text("  ")
+            if i == ui.appearance_cursor:
+                line.append("➤ ", style="green bold")
+                line.append(f"{label:<20}", style="bold")
+            else:
+                line.append("  ")
+                line.append(f"{label:<20}")
+            if color_hex is not None:
+                line.append("██", style=color_hex)
+                line.append(f"  {color_hex}", style="dim")
+                line.append("    ◀ ▶", style="dim")
+            elif toggle_val is not None:
+                if toggle_val:
+                    line.append("● On", style="green")
+                else:
+                    line.append("○ Off", style="dim")
+            else:
+                contrast_val = str(_STUDIO_CONTRAST_VALUES[state.contrast_index])
+                line.append(contrast_val, style="bold" if i == ui.appearance_cursor else "")
+                line.append("    ◀ ▶", style="dim")
+            content_lines.append(line)
+
+    elif ui.tab == 2:
+        if ui.font_filter:
+            content_lines.append(Text(f"  filter: {ui.font_filter}", style="yellow"))
+        size_line = Text("  ")
+        size_line.append("Size ", style="dim")
+        size_line.append(_format_font_size(state.font_size), style="bold")
+        size_line.append("    +/- to adjust", style="dim")
+        content_lines.append(size_line)
+        content_lines.append(Text(""))
         if not font_indices:
-            table.add_row("", "-", "[dim]No match[/dim]", "[dim]Try another /search[/dim]")
+            content_lines.append(Text("  No match — try another /search", style="dim"))
         for pos, real_idx in enumerate(font_indices):
             preset = fonts[real_idx]
-            family = _font_family_from_preset(preset)
-            marker = "➤" if pos == ui.font_cursor else ("•" if real_idx == state.font_index else " ")
-            title = f"[bold]{preset.name}[/bold]" if real_idx == state.font_index else preset.name
-            table.add_row(marker, str(pos + 1), title, family)
-        if ui.font_filter:
-            table.caption = f"filter: {ui.font_filter}"
-        console.print(table)
+            line = Text("  ")
+            if pos == ui.font_cursor:
+                line.append("➤ ", style="green bold")
+                line.append(f"{preset.name:<22}", style="bold")
+            elif real_idx == state.font_index:
+                line.append("• ", style="bright_blue")
+                line.append(f"{preset.name:<22}", style="bright_blue")
+            else:
+                line.append("  ")
+                line.append(f"{preset.name:<22}")
+            line.append(preset.description, style="dim")
+            content_lines.append(line)
 
-    console.print(
-        "[dim]Keys: 1/2/3 tab, j/k move, h/l or ←/→ adjust, / search, "
-        "i apply now, u reset theme defaults, Enter confirm, q cancel[/dim]"
+    else:
+        for pos, preset in enumerate(prompts):
+            line = Text("  ")
+            if pos == ui.prompt_cursor:
+                line.append("➤ ", style="green bold")
+                line.append(f"{preset.name:<20}", style="bold")
+            elif pos == state.prompt_index:
+                line.append("• ", style="bright_blue")
+                line.append(f"{preset.name:<20}", style="bright_blue")
+            else:
+                line.append("  ")
+                line.append(f"{preset.name:<20}")
+            line.append(preset.description, style="dim")
+            content_lines.append(line)
+        selected_prompt = prompts[ui.prompt_cursor] if prompts else None
+        if selected_prompt:
+            content_lines.append(Text(""))
+            content_lines.append(Text("  Preview:", style="dim"))
+            for sample_line in selected_prompt.sample.split("\n"):
+                preview_line = Text("    ")
+                preview_line.append(sample_line, style="bold green")
+                content_lines.append(preview_line)
+
+    # ── Help + status ──
+    help_line = Text(
+        "  j/k navigate   ←→ adjust   / search   "
+        "i install   u reset   Enter apply   q quit",
+        style="dim",
     )
+    status_text: Text | None = None
     if status_message:
-        style = "green" if status_ok else "yellow"
-        console.print(f"[{style}]{status_message}[/{style}]")
+        s = "green" if status_ok else "yellow"
+        status_text = Text(f"  {status_message}", style=s)
+
+    # ── Assemble panel ──
+    parts: list[Text] = [tab_bar, Text(""), status_line, Text("")]
+    parts.extend(content_lines)
+    parts.append(Text(""))
+    parts.append(help_line)
+    if status_text:
+        parts.append(status_text)
+
+    panel = Panel(
+        Group(*parts),
+        title="[bold]Rice Studio[/bold]",
+        border_style="bright_blue",
+        expand=True,
+        padding=(1, 1),
+    )
+    console.print(panel)
 
 
 def _row_cycle_index(current: int, delta: int, size: int) -> int:
@@ -603,7 +670,7 @@ def _apply_theme_defaults(
     state.contrast_index = _closest_contrast_index(theme.contrast)
 
 
-def _adjust_studio_state(
+def _adjust_appearance_state(
     state: _StudioState,
     *,
     row: int,
@@ -611,7 +678,6 @@ def _adjust_studio_state(
     accents: list[str],
     backgrounds: list[str],
     foregrounds: list[str],
-    fonts: list[FontPreset],
 ) -> bool:
     if row == 0:
         state.accent_index = _row_cycle_index(state.accent_index, delta, len(accents))
@@ -623,22 +689,12 @@ def _adjust_studio_state(
         state.foreground_index = _row_cycle_index(state.foreground_index, delta, len(foregrounds))
         return True
     if row == 3:
-        state.font_index = _row_cycle_index(state.font_index, delta, len(fonts))
-        return True
-    if row == 4:
-        updated = state.font_size + (_STUDIO_FONT_STEP * delta)
-        clamped = max(_STUDIO_MIN_FONT_SIZE, min(_STUDIO_MAX_FONT_SIZE, updated))
-        if clamped == state.font_size:
-            return False
-        state.font_size = clamped
-        return True
-    if row == 5:
-        state.translucent = not state.translucent
-        return True
-    if row == 6:
         state.contrast_index = _row_cycle_index(
             state.contrast_index, delta, len(_STUDIO_CONTRAST_VALUES)
         )
+        return True
+    if row == 4:
+        state.translucent = not state.translucent
         return True
     return False
 
@@ -691,90 +747,92 @@ def _run_studio_interactively(
     backgrounds: list[str],
     foregrounds: list[str],
     fonts: list[FontPreset],
+    prompts: list[PromptPreset],
     on_preview: Callable[[_StudioState], tuple[bool, str]] | None = None,
 ) -> bool:
     ui = _SwitchUiState()
     status_ok = True
     status_message: str | None = None
-    row_count = len(_studio_rows(state, themes, accents, backgrounds, foregrounds, fonts))
+
+    def _theme_navigate(delta: int) -> None:
+        nonlocal status_ok, status_message
+        if not theme_indices:
+            return
+        ui.theme_cursor = (ui.theme_cursor + delta) % len(theme_indices)
+        state.theme_index = theme_indices[ui.theme_cursor]
+        _apply_theme_defaults(
+            state, themes=themes, accents=accents,
+            backgrounds=backgrounds, foregrounds=foregrounds,
+        )
+        if on_preview:
+            status_ok, status_message = on_preview(state)
+
+    def _font_navigate(delta: int) -> None:
+        nonlocal status_ok, status_message
+        if not font_indices:
+            return
+        ui.font_cursor = (ui.font_cursor + delta) % len(font_indices)
+        state.font_index = font_indices[ui.font_cursor]
+        if on_preview:
+            status_ok, status_message = on_preview(state)
 
     while True:
-        theme_indices = _filter_indices_by_name([theme.name for theme in themes], ui.theme_filter)
-        if theme_indices:
-            ui.theme_cursor = max(0, min(ui.theme_cursor, len(theme_indices) - 1))
-        else:
-            ui.theme_cursor = 0
-        font_name_list = [f"{preset.name} {_font_family_from_preset(preset)}" for preset in fonts]
+        theme_indices = _filter_indices_by_name(
+            [theme.name for theme in themes], ui.theme_filter,
+        )
+        ui.theme_cursor = max(0, min(ui.theme_cursor, len(theme_indices) - 1)) if theme_indices else 0
+        font_name_list = [f"{p.name} {_font_family_from_preset(p)}" for p in fonts]
         font_indices = _filter_indices_by_name(font_name_list, ui.font_filter)
-        if font_indices:
-            ui.font_cursor = max(0, min(ui.font_cursor, len(font_indices) - 1))
-        else:
-            ui.font_cursor = 0
-        ui.control_cursor = max(0, min(ui.control_cursor, row_count - 1))
+        ui.font_cursor = max(0, min(ui.font_cursor, len(font_indices) - 1)) if font_indices else 0
+        ui.appearance_cursor = max(0, min(ui.appearance_cursor, _APPEARANCE_ROW_COUNT - 1))
+        if prompts:
+            ui.prompt_cursor = max(0, min(ui.prompt_cursor, len(prompts) - 1))
 
         console.clear()
-        _render_studio_table(
-            state,
-            ui,
-            themes,
-            accents,
-            backgrounds,
-            foregrounds,
-            fonts,
-            theme_indices,
-            font_indices,
-            status_ok,
-            status_message,
+        _render_studio_panel(
+            state, ui, themes, accents, backgrounds, foregrounds,
+            fonts, prompts, theme_indices, font_indices,
+            status_ok, status_message,
         )
         action = _read_switch_action()
+
         if action == "tab_1":
             ui.tab = 0
-            continue
-        if action == "tab_2":
+        elif action == "tab_2":
             ui.tab = 1
-            continue
-        if action == "tab_3":
+        elif action == "tab_3":
             ui.tab = 2
-            continue
-        if action == "toggle_focus":
-            ui.tab = (ui.tab + 1) % 3
-            continue
-        if action == "search":
+        elif action == "tab_4":
+            ui.tab = 3
+        elif action == "toggle_focus":
+            ui.tab = (ui.tab + 1) % 4
+        elif action == "search":
             query = click.prompt("Search", default="", show_default=False)
             if ui.tab == 0:
                 ui.theme_filter = query
             elif ui.tab == 2:
                 ui.font_filter = query
-            continue
-        if action == "clear_filter":
+        elif action == "clear_filter":
             if ui.tab == 0:
                 ui.theme_filter = ""
             elif ui.tab == 2:
                 ui.font_filter = ""
-            continue
-        if action == "reset":
+        elif action == "reset":
             if ui.tab in {0, 1} and themes:
                 if ui.tab == 0 and theme_indices:
                     state.theme_index = theme_indices[ui.theme_cursor]
                 _apply_theme_defaults(
-                    state,
-                    themes=themes,
-                    accents=accents,
-                    backgrounds=backgrounds,
-                    foregrounds=foregrounds,
+                    state, themes=themes, accents=accents,
+                    backgrounds=backgrounds, foregrounds=foregrounds,
                 )
                 if on_preview:
                     status_ok, status_message = on_preview(state)
-            continue
-        if action == "install":
+        elif action == "install":
             if ui.tab == 0 and theme_indices:
                 state.theme_index = theme_indices[ui.theme_cursor]
                 _apply_theme_defaults(
-                    state,
-                    themes=themes,
-                    accents=accents,
-                    backgrounds=backgrounds,
-                    foregrounds=foregrounds,
+                    state, themes=themes, accents=accents,
+                    backgrounds=backgrounds, foregrounds=foregrounds,
                 )
                 if on_preview:
                     status_ok, status_message = on_preview(state)
@@ -782,83 +840,44 @@ def _run_studio_interactively(
                 state.font_index = font_indices[ui.font_cursor]
                 if on_preview:
                     status_ok, status_message = on_preview(state)
-            continue
+            elif ui.tab == 3 and prompts:
+                state.prompt_index = ui.prompt_cursor
         elif action == "up":
             if ui.tab == 0:
-                if theme_indices:
-                    ui.theme_cursor = (ui.theme_cursor - 1) % len(theme_indices)
-                    state.theme_index = theme_indices[ui.theme_cursor]
-                    _apply_theme_defaults(
-                        state,
-                        themes=themes,
-                        accents=accents,
-                        backgrounds=backgrounds,
-                        foregrounds=foregrounds,
-                    )
-                    if on_preview:
-                        status_ok, status_message = on_preview(state)
+                _theme_navigate(-1)
+            elif ui.tab == 1:
+                ui.appearance_cursor = (ui.appearance_cursor - 1) % _APPEARANCE_ROW_COUNT
             elif ui.tab == 2:
-                if font_indices:
-                    ui.font_cursor = (ui.font_cursor - 1) % len(font_indices)
-                    state.font_index = font_indices[ui.font_cursor]
-                    if on_preview:
-                        status_ok, status_message = on_preview(state)
-            else:
-                ui.control_cursor = (ui.control_cursor - 1) % row_count
+                _font_navigate(-1)
+            elif ui.tab == 3 and prompts:
+                ui.prompt_cursor = (ui.prompt_cursor - 1) % len(prompts)
         elif action == "down":
             if ui.tab == 0:
-                if theme_indices:
-                    ui.theme_cursor = (ui.theme_cursor + 1) % len(theme_indices)
-                    state.theme_index = theme_indices[ui.theme_cursor]
-                    _apply_theme_defaults(
-                        state,
-                        themes=themes,
-                        accents=accents,
-                        backgrounds=backgrounds,
-                        foregrounds=foregrounds,
-                    )
-                    if on_preview:
-                        status_ok, status_message = on_preview(state)
+                _theme_navigate(1)
+            elif ui.tab == 1:
+                ui.appearance_cursor = (ui.appearance_cursor + 1) % _APPEARANCE_ROW_COUNT
             elif ui.tab == 2:
-                if font_indices:
-                    ui.font_cursor = (ui.font_cursor + 1) % len(font_indices)
-                    state.font_index = font_indices[ui.font_cursor]
-                    if on_preview:
-                        status_ok, status_message = on_preview(state)
-            else:
-                ui.control_cursor = (ui.control_cursor + 1) % row_count
+                _font_navigate(1)
+            elif ui.tab == 3 and prompts:
+                ui.prompt_cursor = (ui.prompt_cursor + 1) % len(prompts)
         elif action in {"bigger", "smaller"}:
-            if ui.tab == 1:
-                changed = _adjust_studio_state(
-                    state,
-                    row=ui.control_cursor,
-                    delta=1 if action == "bigger" else -1,
-                    accents=accents,
-                    backgrounds=backgrounds,
+            delta = 1 if action == "bigger" else -1
+            if ui.tab == 0:
+                _theme_navigate(delta)
+            elif ui.tab == 1:
+                changed = _adjust_appearance_state(
+                    state, row=ui.appearance_cursor, delta=delta,
+                    accents=accents, backgrounds=backgrounds,
                     foregrounds=foregrounds,
-                    fonts=fonts,
                 )
                 if changed and on_preview:
                     status_ok, status_message = on_preview(state)
-            elif ui.tab == 0:
-                if theme_indices:
-                    delta = 1 if action == "bigger" else -1
-                    ui.theme_cursor = (ui.theme_cursor + delta) % len(theme_indices)
-                    state.theme_index = theme_indices[ui.theme_cursor]
-                    _apply_theme_defaults(
-                        state,
-                        themes=themes,
-                        accents=accents,
-                        backgrounds=backgrounds,
-                        foregrounds=foregrounds,
-                    )
-                    if on_preview:
-                        status_ok, status_message = on_preview(state)
-            else:
-                if font_indices:
-                    delta = 1 if action == "bigger" else -1
-                    ui.font_cursor = (ui.font_cursor + delta) % len(font_indices)
-                    state.font_index = font_indices[ui.font_cursor]
+            elif ui.tab == 2:
+                # ←/→ adjusts font size on font tab
+                updated = state.font_size + (_STUDIO_FONT_STEP * delta)
+                clamped = max(_STUDIO_MIN_FONT_SIZE, min(_STUDIO_MAX_FONT_SIZE, updated))
+                if clamped != state.font_size:
+                    state.font_size = clamped
                     if on_preview:
                         status_ok, status_message = on_preview(state)
         elif action == "apply":
@@ -1087,6 +1106,14 @@ def _run_theme_studio(no_reload: bool) -> None:
         console.print("[yellow]Theme swatches are not available.[/yellow]")
         return
 
+    prompts = list_prompt_presets()
+    current_prompt = current_prompt_preset_name()
+    prompt_index = 0
+    if current_prompt:
+        prompt_index = next(
+            (i for i, p in enumerate(prompts) if p.name == current_prompt), 0,
+        )
+
     snapshot_existed, snapshot_content = _capture_config_snapshot()
     current_profile = get_current_profile()
     theme_index = next(
@@ -1121,6 +1148,7 @@ def _run_theme_studio(no_reload: bool) -> None:
         font_size=max(_STUDIO_MIN_FONT_SIZE, min(_STUDIO_MAX_FONT_SIZE, initial_size)),
         contrast_index=0,
         translucent=False,
+        prompt_index=prompt_index,
     )
     _apply_theme_defaults(
         state,
@@ -1184,6 +1212,7 @@ def _run_theme_studio(no_reload: bool) -> None:
         backgrounds=backgrounds,
         foregrounds=foregrounds,
         fonts=fonts,
+        prompts=prompts,
         on_preview=_preview,
     )
     if not applied:
@@ -1197,6 +1226,13 @@ def _run_theme_studio(no_reload: bool) -> None:
             return
         console.print("[yellow]Cancelled.[/yellow]")
         return
+
+    # Apply prompt preset if changed
+    if prompts and state.prompt_index < len(prompts):
+        selected_prompt = prompts[state.prompt_index]
+        apply_prompt_preset(selected_prompt)
+        if zsh_available():
+            ensure_prompt_bootstrap()
 
     final_signature = _studio_profile_signature(
         state,
@@ -1225,11 +1261,12 @@ def _run_theme_studio(no_reload: bool) -> None:
         apply_font_preset(_preset_with_size(fonts[state.font_index], state.font_size))
         apply_profile(profile)
 
+    prompt_name = prompts[state.prompt_index].name if prompts else "—"
     console.print(
         "[green]Switch applied:[/green] "
         f"[bold]{final_signature[0]}[/bold] "
         f"[dim]font={final_signature[4]} size={final_signature[5]} "
-        f"contrast={final_signature[6]}[/dim]"
+        f"contrast={final_signature[6]} prompt={prompt_name}[/dim]"
     )
     if not no_reload:
         if preview_signature == final_signature and not preview_reload_pending:

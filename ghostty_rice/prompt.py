@@ -31,39 +31,80 @@ class PromptPreset:
 
 _PROMPT_PRESETS: list[PromptPreset] = [
     PromptPreset(
+        name="Zen",
+        description="Ultra-minimal — colored status arrow only",
+        sample="❯",
+        script="PROMPT='%(?.%F{green}.%F{red})❯%f '\n",
+    ),
+    PromptPreset(
+        name="Minimal Arrow",
+        description="Repo name with subtle arrow",
+        sample="ghostty-rice ›",
+        script="PROMPT='%F{blue}%1~%f %F{242}›%f '\n",
+    ),
+    PromptPreset(
+        name="Lambda",
+        description="Sleek lambda accent with path",
+        sample="λ ghostty-rice ›",
+        script="PROMPT='%F{yellow}λ%f %F{blue}%1~%f %F{242}›%f '\n",
+    ),
+    PromptPreset(
         name="Dev Compact",
-        description="Virtualenv + 2-level path, clean single-line prompt",
+        description="Virtualenv + short path, single line",
         sample="(.venv) repo/subdir »",
         script=(
             "setopt PROMPT_SUBST\n"
-            "PROMPT='${VIRTUAL_ENV:+(%F{70}${VIRTUAL_ENV:t}%f) }"
-            "%F{67}%2~%f %F{244}»%f '\n"
+            "PROMPT='${VIRTUAL_ENV:+(%F{green}${VIRTUAL_ENV:t}%f) }"
+            "%F{blue}%2~%f %F{242}»%f '\n"
+        ),
+    ),
+    PromptPreset(
+        name="Starship",
+        description="Two-line with git branch — modern and spacious",
+        sample="~/project main\n❯",
+        script=(
+            "setopt PROMPT_SUBST\n"
+            "__rice_git_prompt() {\n"
+            "  local b=$(git symbolic-ref --short HEAD 2>/dev/null)\n"
+            '  [[ -n "$b" ]] && echo " %F{magenta}$b%f"\n'
+            "}\n"
+            "PROMPT='\n"
+            "%F{blue}%~%f$(__rice_git_prompt)\n"
+            "%(?.%F{green}.%F{red})❯%f '\n"
+        ),
+    ),
+    PromptPreset(
+        name="Boxed",
+        description="Two-line box-drawn frame with git branch",
+        sample="┌ ~/project (main)\n└ ❯",
+        script=(
+            "setopt PROMPT_SUBST\n"
+            "__rice_git_prompt() {\n"
+            "  local b=$(git symbolic-ref --short HEAD 2>/dev/null)\n"
+            '  [[ -n "$b" ]] && echo " %F{242}($b)%f"\n'
+            "}\n"
+            "PROMPT='%F{242}┌%f %F{blue}%~%f$(__rice_git_prompt)\n"
+            "%F{242}└%f %(?.%F{green}.%F{red})❯%f '\n"
         ),
     ),
     PromptPreset(
         name="Deep Path",
-        description="Virtualenv + full working path for directory-heavy workflows",
-        sample="(.venv) ~/Developer/python/jayleonc/ghostty-rice ❯",
+        description="Full working path for deep directory trees",
+        sample="(.venv) ~/Developer/python/project ❯",
         script=(
             "setopt PROMPT_SUBST\n"
-            "PROMPT='${VIRTUAL_ENV:+(%F{70}${VIRTUAL_ENV:t}%f) }"
-            "%F{67}%~%f %F{244}❯%f '\n"
+            "PROMPT='${VIRTUAL_ENV:+(%F{green}${VIRTUAL_ENV:t}%f) }"
+            "%F{blue}%~%f %F{242}❯%f '\n"
         ),
     ),
     PromptPreset(
-        name="Minimal Arrow",
-        description="Just compact path + subtle arrow",
-        sample="ghostty-rice ›",
-        script="PROMPT='%F{67}%1~%f %F{242}›%f '\n",
-    ),
-    PromptPreset(
         name="Context Rich",
-        description="Virtualenv + user@host + path",
+        description="Full context — user@host, path, privileges",
         sample="[.venv] jay@mbp ghostty-rice #",
         script=(
             "setopt PROMPT_SUBST\n"
-            "PROMPT='${VIRTUAL_ENV:+[%F{70}${VIRTUAL_ENV:t}%f] }"
-            "%F{67}%n@%m%f %F{67}%1~%f %F{244}%#%f '\n"
+            "PROMPT='${VIRTUAL_ENV:+[%F{green}${VIRTUAL_ENV:t}%f] }"
+            "%F{blue}%n@%m%f %F{blue}%1~%f %F{242}%#%f '\n"
         ),
     ),
 ]
@@ -137,11 +178,11 @@ def prompt_bootstrap_line(prompt_file: Path | None = None) -> str:
         "  if [[ -z \"${ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE:-}\" "
         "|| \"${ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE}\" == \"fg=8\" "
         "|| ${ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE} == fg=#* ]]; then\n"
-        "    export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=242'\n"
+        "    export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=238'\n"
         "  fi\n"
         "  if typeset -p ZSH_HIGHLIGHT_STYLES >/dev/null 2>&1; then\n"
         "    [[ -n \"${ZSH_HIGHLIGHT_STYLES[comment]:-}\" ]] || "
-        "ZSH_HIGHLIGHT_STYLES[comment]='fg=242'\n"
+        "ZSH_HIGHLIGHT_STYLES[comment]='fg=238'\n"
         "  fi\n"
         f'  _RICE_PROMPT_FILE="{target}"\n'
         "  __rice_prompt_reload() {\n"
