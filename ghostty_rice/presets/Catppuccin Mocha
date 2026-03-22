@@ -19,6 +19,9 @@
 
 # --- Theme ---
 theme = Catppuccin Mocha
+foreground = #cfd6e7
+palette = 8=#6f7788
+palette = 15=#e8edf7
 
 # --- Window ---
 # Near-opaque: Catppuccin's colors are designed for solid backgrounds.

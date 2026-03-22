@@ -1,0 +1,53 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║  Codex — Graphite Focus                                      ║
+# ╚══════════════════════════════════════════════════════════════╝
+#
+# Inspired by the Codex desktop app dark chrome ("Absolutely"):
+# graphite surfaces, warm copper accent, high legibility without
+# stark pure-white text.
+
+# --- Theme ---
+background = #2d2d2b
+foreground = #e0dfda
+cursor-color = #cc7d5e
+selection-background = #4a4a47
+selection-foreground = #f9f9f7
+
+# --- ANSI palette ---
+palette = 0=#1e1f23
+palette = 1=#ff5f38
+palette = 2=#00c853
+palette = 3=#d39a4f
+palette = 4=#4d8dff
+palette = 5=#cc7d5e
+palette = 6=#4ea7b5
+palette = 7=#c8c8c2
+palette = 8=#6f7788
+palette = 9=#ff8c69
+palette = 10=#46d987
+palette = 11=#f1be78
+palette = 12=#7aa9ff
+palette = 13=#e2a188
+palette = 14=#7bc6d1
+palette = 15=#f3f3ef
+
+# --- Window ---
+background-opacity = 0.98
+background-blur = macos-glass-regular
+window-padding-x = 16
+window-padding-y = 12
+window-padding-color = extend
+
+# --- Titlebar ---
+macos-titlebar-style = transparent
+macos-icon = glass
+
+# --- Cursor ---
+cursor-style = block
+cursor-style-blink = false
+
+# --- Splits ---
+unfocused-split-opacity = 0.80
+
+# --- Accessibility ---
+minimum-contrast = 5.5

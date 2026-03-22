@@ -23,12 +23,14 @@
 
 # --- Theme ---
 theme = Catppuccin Macchiato
+foreground = #c8d5f5
+palette = 8=#647089
 
 # --- Window ---
 # The glass IS the aesthetic. 0.85 is the floor for readability —
 # below this, text becomes a struggle in any lighting condition.
 # minimum-contrast will rescue individual characters if needed.
-background-opacity = 0.85
+background-opacity = 0.90
 background-blur = macos-glass-clear
 window-padding-x = 20
 window-padding-y = 14

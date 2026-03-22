@@ -56,7 +56,7 @@
 Color themes only change 16 ANSI colors. **ghostty-rice** manages complete visual profiles — colors, opacity, blur, titlebar, cursor, padding, icons — and switches them with a single command.
 
 ```bash
-rice use "Catppuccin Mocha"    # Switch profile, auto-reloads Ghostty
+rice switch    # Interactive live switch with instant preview + reload
 ```
 
 ## Why ghostty-rice?
@@ -99,37 +99,82 @@ pip install -e .
 # List available profiles
 rice list
 
-# Switch profile (auto-reloads Ghostty)
-rice use "Catppuccin Mocha"
-
-# Interactive switcher (arrow keys + Enter)
+# Full switcher (themes + controls, live preview; Tab / hjkl / arrows)
 rice switch
 
-# Interactive font studio (live preview)
+# Interactive font studio (quality fonts only, +/- to resize live)
 rice font
+
+# Interactive zsh prompt picker + one-shot install to ~/.zshrc
+rice prompt --install
 
 # Preview without switching
 rice preview "Cyber"
 
 # Check setup
 rice doctor
+# Install safe fixes (recommended once, macOS terminfo for Vim/Neovim)
+rice doctor --fix
 
 # See current profile
 rice current
 ```
 
-## Built-in Profiles (8)
+## Built-in Profiles (10)
 
 | Profile | Style |
 |---------|-------|
 | **Catppuccin Mocha** | Warm, cozy, the most popular dev palette |
 | **One Dark Pro** | High-adoption baseline with balanced contrast |
+| **Codex** | Graphite dark, warm accent, muted low-glare text |
+| **Everforest** | Soft woodland palette for long low-fatigue sessions |
 | **Cyber** | High transparency, hidden chrome, holographic icon |
 | **Minimal** | No chrome, no blur, just code |
 | **Frosted** | macOS native frosted glass, light mode |
 | **Nord** | Arctic, north-bluish palette — calm and focused |
 | **Gruvbox** | Retro groove with warm, earthy tones |
 | **Dracula** | Iconic dark theme with vibrant purple and pink |
+
+## Switch Controls
+
+`rice switch` now includes the full control panel with live preview:
+
+- Dark theme family (Absolutely / Ayu / Catppuccin / Codex / Dracula / Everforest / GitHub / Gruvbox / Linear / Sentry / Solarized / Temple / Tokyo Night / VS Code Plus)
+- Accent color
+- Background / foreground
+- Code font + size
+- Translucent glass toggle
+- Contrast
+
+Mason/Lazy-style keyboard flow:
+- `1/2/3`: switch tabs (Themes / Controls / Fonts)
+- `j/k` or `↑/↓`: move selection
+- `h/l` or `←/→` or `+/-`: adjust
+- `/`: search in current list tab
+- `i`: apply current selected item immediately
+- `u`: reset to selected theme defaults
+- `q`: cancel and rollback
+
+## Shell Prompt Presets (zsh)
+
+The line like `(.venv) jayleonc/ghostty-rice »` is your **shell prompt** (zsh), not the Ghostty theme.
+If `zsh` is missing, `rice prompt` will warn and stop.
+By default, rice prompt is applied only in Ghostty sessions, so iTerm2 can keep your existing prompt.
+
+```bash
+rice prompt --install
+```
+
+First install requires one reload:
+
+```bash
+source ~/.zshrc
+```
+
+After that, changing preset via `rice prompt` is applied on the next prompt automatically in Ghostty zsh.
+The bootstrap also sets a muted default for `zsh-autosuggestions` and exports `COLORTERM=truecolor`.
+
+If you use Oh My Zsh / Starship / Powerlevel10k, keep the rice bootstrap near the end of `~/.zshrc` so it takes effect after other prompt initializers.
 
 ## Custom Profiles
 
@@ -172,7 +217,7 @@ tags = ["dark", "custom"]
 **4. Use it:**
 
 ```bash
-rice use "My Theme"
+rice switch    # then pick "My Theme"
 ```
 
 ## Diagnostics
@@ -181,7 +226,8 @@ rice use "My Theme"
 rice doctor
 ```
 
-Checks Ghostty installation, version, running state, automation permissions, config directory, and profile status in one command.
+Checks Ghostty installation, version, running state, automation permissions, `xterm-ghostty` terminfo, config directory, and profile status in one command.
+If Vim/Neovim colors or key behavior look wrong, run `rice doctor --fix` once.
 
 ## How It Works
 

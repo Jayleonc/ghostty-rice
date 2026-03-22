@@ -21,6 +21,8 @@
 
 # --- Theme ---
 theme = Nord
+foreground = #d8e0f0
+palette = 8=#6a7388
 
 # --- Window ---
 # Nord's colors are scientifically placed on the CIELAB space.

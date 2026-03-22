@@ -56,7 +56,7 @@
 传统主题只改 16 色调色盘。**ghostty-rice** 管理完整的视觉方案 —— 颜色、透明度、毛玻璃、标题栏、光标、边距、图标 —— 一条命令全部切换。
 
 ```bash
-rice use "Catppuccin Mocha"    # 切换方案，Ghostty 自动重载
+rice switch    # 交互式实时切换 + 自动重载
 ```
 
 ## 为什么需要 ghostty-rice？
@@ -101,37 +101,82 @@ pip install -e .
 # 查看所有可用方案
 rice list
 
-# 切换方案（自动重载 Ghostty）
-rice use "Catppuccin Mocha"
-
-# 交互式切换（方向键 + 回车）
+# 全功能 switch（主题 + 控制项，实时预览；Tab / hjkl / 方向键）
 rice switch
 
-# 交互式字体工作台（实时预览）
+# 交互式字体工作台（高质量字体筛选，+/- 可实时调字号）
 rice font
+
+# 交互式 zsh Prompt 选择器，并自动写入 ~/.zshrc
+rice prompt --install
 
 # 预览方案（不切换）
 rice preview "Cyber"
 
 # 一键检查环境
 rice doctor
+# 一键修复常见兼容问题（推荐执行一次，macOS 的 Vim/Neovim terminfo）
+rice doctor --fix
 
 # 查看当前方案
 rice current
 ```
 
-## 内置方案 (8)
+## 内置方案 (10)
 
 | 方案 | 风格 |
 |------|------|
 | **Catppuccin Mocha** | 温暖柔和，程序员圈最火的配色 |
 | **One Dark Pro** | 高使用率的稳定暗色基线，阅读压力低 |
+| **Codex** | 石墨暗色 + 暖色强调，低眩光更耐看 |
+| **Everforest** | 柔和森林系暗色，长时间编码更舒适 |
 | **Cyber** | 赛博朋克 —— 高透明度、隐藏标题栏、全息图标 |
 | **Minimal** | 极简 —— 无标题栏、无模糊、只有代码 |
 | **Frosted** | macOS 原生毛玻璃，亮色模式 |
 | **Nord** | 北极冰蓝，冷静专注 |
 | **Gruvbox** | 复古暖调，Vim 用户最爱 |
 | **Dracula** | 经典暗色，标志性紫粉配色 |
+
+## Switch 交互控制
+
+`rice switch` 现在直接内置完整控制面板，并且实时预览：
+
+- 暗色主题族（Absolutely / Ayu / Catppuccin / Codex / Dracula / Everforest / GitHub / Gruvbox / Linear / Sentry / Solarized / Temple / Tokyo Night / VS Code Plus）
+- 强调色（Accent）
+- 背景/前景色
+- 代码字体 + 字号
+- 毛玻璃开关
+- 对比度
+
+键位风格（接近 Mason/Lazy）：
+- `1/2/3`：切换标签（Themes / Controls / Fonts）
+- `j/k` 或 `↑/↓`：移动选择
+- `h/l` 或 `←/→` 或 `+/-`：调整参数
+- `/`：在当前列表标签内搜索
+- `i`：立即应用当前项
+- `u`：重置到当前主题默认值
+- `q`：取消并回滚
+
+## Shell Prompt 预设（zsh）
+
+像 `(.venv) jayleonc/ghostty-rice »` 这行是 **shell prompt（zsh）**，不属于 Ghostty 主题本身。
+如果系统没有 `zsh`，`rice prompt` 会直接提示并停止。
+默认仅在 Ghostty 会话里启用，不会覆盖你 iTerm2 原有 prompt。
+
+```bash
+rice prompt --install
+```
+
+首次安装需要执行一次：
+
+```bash
+source ~/.zshrc
+```
+
+之后再执行 `rice prompt`，在 Ghostty 的 zsh 会话里会在下一次提示符自动生效。
+同时会给 `zsh-autosuggestions` 设置更柔和的默认灰度，并导出 `COLORTERM=truecolor`。
+
+如果你用了 Oh My Zsh / Starship / Powerlevel10k，请把 rice 的 bootstrap 放在 `~/.zshrc` 靠后位置，确保在其它 Prompt 初始化之后生效。
 
 ## 自定义方案
 
@@ -174,7 +219,7 @@ tags = ["dark", "custom"]
 **4. 使用：**
 
 ```bash
-rice use "My Theme"
+rice switch    # 然后选中 "My Theme"
 ```
 
 ## 环境诊断
@@ -183,7 +228,8 @@ rice use "My Theme"
 rice doctor
 ```
 
-一键检查：Ghostty 安装状态、版本号、运行状态、自动化权限、配置目录、方案加载情况。
+一键检查：Ghostty 安装状态、版本号、运行状态、自动化权限、`xterm-ghostty` terminfo、配置目录、方案加载情况。
+如果 Vim/Neovim 颜色或按键表现不对，执行一次 `rice doctor --fix`。
 
 ## 工作原理
 

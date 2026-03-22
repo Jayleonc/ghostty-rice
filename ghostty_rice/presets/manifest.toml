@@ -8,8 +8,18 @@ description = "Blade Runner HUD — translucent glass on neon wallpapers, hidden
 author = "ghostty-rice"
 tags = ["dark", "cyberpunk", "glass", "holographic", "immersive"]
 
+[profiles."Codex"]
+description = "Graphite focus — Codex-like dark chrome, warm accent, low-glare text"
+author = "ghostty-rice"
+tags = ["dark", "codex", "graphite", "muted", "focus"]
+
+[profiles."Everforest"]
+description = "Soft woodland dark — muted contrast for long sessions"
+author = "ghostty-rice"
+tags = ["dark", "everforest", "muted", "eye-comfort"]
+
 [profiles."Frosted"]
-description = "Morning studio — macOS frosted glass with stronger foreground contrast"
+description = "Morning studio — frosted light mode with deeper ink and near-opaque glass"
 author = "ghostty-rice"
 tags = ["light", "glass", "macos", "native", "daytime"]
 

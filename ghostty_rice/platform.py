@@ -15,6 +15,12 @@ import platform
 import shutil
 import subprocess
 from dataclasses import dataclass
+from pathlib import Path
+
+_GHOSTTY_TERMINFO_NAME = "xterm-ghostty"
+_MACOS_BUNDLED_TERMINFO = Path(
+    "/Applications/Ghostty.app/Contents/Resources/terminfo/78/xterm-ghostty"
+)
 
 
 @dataclass
@@ -33,6 +39,42 @@ class DiagnosticCheck:
     passed: bool
     message: str
     hint: str = ""
+
+
+def has_xterm_ghostty_terminfo() -> bool:
+    """Return whether `xterm-ghostty` terminfo entry is available."""
+    try:
+        result = subprocess.run(
+            ["infocmp", _GHOSTTY_TERMINFO_NAME],
+            capture_output=True,
+            timeout=3,
+        )
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return False
+    return result.returncode == 0
+
+
+def install_xterm_ghostty_terminfo() -> tuple[bool, str]:
+    """Install Ghostty bundled terminfo into user terminfo dir on macOS."""
+    if platform.system() != "Darwin":
+        return False, "Terminfo installer is currently macOS-only."
+
+    if has_xterm_ghostty_terminfo():
+        return True, "xterm-ghostty terminfo already installed."
+
+    if not _MACOS_BUNDLED_TERMINFO.exists():
+        return False, f"Bundled terminfo not found: {_MACOS_BUNDLED_TERMINFO}"
+
+    target = Path.home() / ".terminfo" / "78" / _GHOSTTY_TERMINFO_NAME
+    target.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        shutil.copy2(_MACOS_BUNDLED_TERMINFO, target)
+    except OSError as exc:
+        return False, f"Failed to install terminfo: {exc}"
+
+    if has_xterm_ghostty_terminfo():
+        return True, "Installed xterm-ghostty terminfo (improves Vim/Neovim rendering)."
+    return False, "Terminfo copy succeeded but `infocmp xterm-ghostty` still fails."
 
 
 class GhosttyPlatform(abc.ABC):
@@ -221,6 +263,22 @@ class MacOSPlatform(GhosttyPlatform):
         # Check AppleScript automation permission
         checks.append(self._check_automation_permission())
 
+        # Check xterm-ghostty terminfo for better TUI compatibility (Vim/Neovim/FZF)
+        terminfo_ok = has_xterm_ghostty_terminfo()
+        checks.append(
+            DiagnosticCheck(
+                name="xterm-ghostty terminfo",
+                passed=terminfo_ok,
+                message="Installed" if terminfo_ok else "Missing",
+                hint=(
+                    "Run `rice doctor --fix` to install bundled terminfo "
+                    "for better Vim/Neovim colors and key behavior"
+                    if not terminfo_ok
+                    else ""
+                ),
+            )
+        )
+
         return checks
 
     def _check_automation_permission(self) -> DiagnosticCheck:
@@ -258,14 +316,14 @@ class MacOSPlatform(GhosttyPlatform):
                 name="Automation permission",
                 passed=False,
                 message="Could not verify",
-                hint="Run `rice use <profile>` once to trigger the permission prompt",
+                hint="Run `rice switch` once to trigger the permission prompt",
             )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return DiagnosticCheck(
                 name="Automation permission",
                 passed=False,
                 message="Could not check",
-                hint="Try running: rice use <profile> to trigger the permission prompt",
+                hint="Try running: rice switch to trigger the permission prompt",
             )
 
 

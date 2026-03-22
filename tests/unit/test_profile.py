@@ -88,12 +88,15 @@ def test_critical_builtin_theme_names_match_ghostty() -> None:
     catppuccin = (bundled_presets_dir() / "Catppuccin Mocha").read_text()
     one_dark = (bundled_presets_dir() / "One Dark Pro").read_text()
     frosted = (bundled_presets_dir() / "Frosted").read_text()
+    codex = (bundled_presets_dir() / "Codex").read_text()
 
     assert "theme = Catppuccin Mocha" in catppuccin
     assert "theme = Atom One Dark" in one_dark
-    assert "foreground = #2f3648" in frosted
-    assert "background-opacity = 0.97" in frosted
+    assert "foreground = #2e3442" in frosted
+    assert "background-opacity = 0.995" in frosted
     assert "minimum-contrast = 6.0" in frosted
+    assert "background = #2d2d2b" in codex
+    assert "palette = 8=#6f7788" in codex
 
 
 def test_upsert_base_settings_replaces_existing_keys() -> None:

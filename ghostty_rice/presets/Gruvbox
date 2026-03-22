@@ -23,6 +23,8 @@
 
 # --- Theme ---
 theme = Gruvbox Dark Hard
+foreground = #d8c9a6
+palette = 8=#7b7463
 
 # --- Window ---
 # Fully opaque: Gruvbox's identity IS its warm background.

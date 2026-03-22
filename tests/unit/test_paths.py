@@ -70,3 +70,15 @@ def test_user_profiles_dir_prefers_legacy_folder(monkeypatch, tmp_path: Path) ->
     legacy.mkdir()
 
     assert paths.user_profiles_dir() == legacy
+
+
+def test_prompt_preset_file_is_under_rice_shell_dir(monkeypatch, tmp_path: Path) -> None:
+    _set_macos_env(monkeypatch, tmp_path)
+
+    app_dir = tmp_path / "Library" / "Application Support" / "com.mitchellh.ghostty"
+    app_dir.mkdir(parents=True)
+    (app_dir / "config").write_text("# app config\n")
+
+    target = paths.prompt_preset_file()
+    assert target == app_dir / "rice" / "shell" / "prompt.zsh"
+    assert target.parent.exists()

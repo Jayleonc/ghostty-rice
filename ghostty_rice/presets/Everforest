@@ -1,19 +1,14 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  One Dark Pro — Studio Baseline                             ║
+# ║  Everforest — Soft Woodland                                  ║
 # ╚══════════════════════════════════════════════════════════════╝
 #
-# Why this preset:
-# - One of the most installed editor themes in the ecosystem.
-# - Works across code, prose, and terminal UI without neon noise.
-# - Balanced contrast, predictable syntax hierarchy, low eye strain.
-#
-# This profile is tuned for daily engineering work:
-# readable, stable, and low-flicker on macOS.
+# A softer low-fatigue dark palette with reduced white intensity.
+# Good for long coding sessions where high contrast feels aggressive.
 
 # --- Theme ---
-theme = Atom One Dark
-foreground = #cbd4e3
-palette = 8=#6b7280
+theme = Everforest Dark Hard
+foreground = #d5d8c3
+palette = 8=#6f7768
 
 # --- Window ---
 background-opacity = 1.0
@@ -26,15 +21,15 @@ macos-titlebar-style = transparent
 macos-icon = glass
 
 # --- Cursor ---
-cursor-style = block
+cursor-style = bar
 cursor-style-blink = false
 
 # --- Selection ---
-selection-background = #3e4451
-selection-foreground = #abb2bf
+selection-background = #495156
+selection-foreground = #dbe0c8
 
 # --- Splits ---
-unfocused-split-opacity = 0.85
+unfocused-split-opacity = 0.82
 
 # --- Accessibility ---
 minimum-contrast = 5.0

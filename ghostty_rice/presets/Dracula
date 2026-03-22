@@ -24,6 +24,8 @@
 
 # --- Theme ---
 theme = Dracula
+foreground = #d8dae7
+palette = 8=#687089
 
 # --- Window ---
 # Dracula's purple-grey base is distinctive — protect it.

@@ -22,6 +22,8 @@
 
 # --- Theme ---
 theme = Builtin Tango Dark
+foreground = #c8cdd8
+palette = 8=#6b7280
 
 # --- Window ---
 # Fully opaque — no glass, no distractions.

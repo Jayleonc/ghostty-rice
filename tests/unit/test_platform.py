@@ -5,7 +5,13 @@ from __future__ import annotations
 import subprocess
 from unittest.mock import patch
 
-from ghostty_rice.platform import DiagnosticCheck, MacOSPlatform, get_platform
+from ghostty_rice.platform import (
+    DiagnosticCheck,
+    MacOSPlatform,
+    get_platform,
+    has_xterm_ghostty_terminfo,
+    install_xterm_ghostty_terminfo,
+)
 
 
 def test_get_platform_returns_instance() -> None:
@@ -71,3 +77,28 @@ def test_macos_check_automation_permission_parses_error_output() -> None:
 
     assert check.passed is False
     assert check.message == "Not granted"
+
+
+def test_has_xterm_ghostty_terminfo_true_on_infocmp_success() -> None:
+    with patch(
+        "ghostty_rice.platform.subprocess.run",
+        return_value=_completed(0),
+    ):
+        assert has_xterm_ghostty_terminfo() is True
+
+
+def test_install_xterm_ghostty_terminfo_copies_bundle_when_missing(tmp_path) -> None:
+    bundled = tmp_path / "xterm-ghostty"
+    bundled.write_text("compiled-terminfo")
+    with (
+        patch("ghostty_rice.platform.platform.system", return_value="Darwin"),
+        patch("ghostty_rice.platform.Path.home", return_value=tmp_path),
+        patch("ghostty_rice.platform.has_xterm_ghostty_terminfo", side_effect=[False, True]),
+        patch("ghostty_rice.platform._MACOS_BUNDLED_TERMINFO", bundled),
+        patch("ghostty_rice.platform.shutil.copy2") as mock_copy,
+    ):
+        ok, msg = install_xterm_ghostty_terminfo()
+
+    assert ok is True
+    mock_copy.assert_called_once()
+    assert "Installed xterm-ghostty terminfo" in msg

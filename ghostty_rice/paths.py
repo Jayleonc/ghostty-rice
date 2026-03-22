@@ -77,6 +77,13 @@ def user_profiles_dir() -> Path:
     return d
 
 
+def prompt_preset_file() -> Path:
+    """Return the zsh prompt preset file managed by rice."""
+    shell_dir = rice_dir() / "shell"
+    shell_dir.mkdir(parents=True, exist_ok=True)
+    return shell_dir / "prompt.zsh"
+
+
 def bundled_presets_dir() -> Path:
     """Return the directory containing bundled preset profiles."""
     return _BUNDLED_PRESETS
