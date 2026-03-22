@@ -175,10 +175,6 @@ def prompt_bootstrap_line(prompt_file: Path | None = None) -> str:
         '|| -n "${GHOSTTY_RESOURCES_DIR:-}" ]]; then\n'
         "  export GHOSTTY_RICE_PROMPT_HOOK=1\n"
         "  export COLORTERM=${COLORTERM:-truecolor}\n"
-        "  export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#555555'\n"
-        "  if typeset -p ZSH_HIGHLIGHT_STYLES >/dev/null 2>&1; then\n"
-        "    ZSH_HIGHLIGHT_STYLES[comment]='fg=#555555'\n"
-        "  fi\n"
         f'  _RICE_PROMPT_FILE="{target}"\n'
         "  __rice_prompt_reload() {\n"
         '    [[ -f "$_RICE_PROMPT_FILE" ]] || return\n'

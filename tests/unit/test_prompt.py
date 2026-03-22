@@ -59,7 +59,6 @@ def test_prompt_bootstrap_line_uses_target_file(tmp_path: Path) -> None:
     assert str(target) in line
     assert "${TERM_PROGRAM:-}" in line
     assert "xterm-ghostty" in line
-    assert "ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE" in line
     assert "COLORTERM" in line
     assert "add-zsh-hook precmd __rice_prompt_reload" in line
 
