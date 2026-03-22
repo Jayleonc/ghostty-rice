@@ -135,31 +135,43 @@ rice current
 | **Gruvbox** | Retro groove with warm, earthy tones |
 | **Dracula** | Iconic dark theme with vibrant purple and pink |
 
-## Switch Controls
+## Rice Studio
 
-`rice switch` now includes the full control panel with live preview:
+`rice switch` opens the full studio — a bordered, Mason/Lazy-style panel with 4 tabs:
 
-- Dark theme family (Absolutely / Ayu / Catppuccin / Codex / Dracula / Everforest / GitHub / Gruvbox / Linear / Sentry / Solarized / Temple / Tokyo Night / VS Code Plus)
-- Accent color
-- Background / foreground
-- Code font + size
-- Translucent glass toggle
-- Contrast
+| Tab | What it does |
+|-----|-------------|
+| **1 Themes** | Browse 14 dark theme families with live preview and color swatches |
+| **2 Appearance** | Accent / Background / Foreground colors, Contrast, Translucent glass |
+| **3 Fonts** | Font family picker + font size adjustment |
+| **4 Prompt** | Shell prompt presets with sample preview (applied on confirm) |
 
-Mason/Lazy-style keyboard flow:
-- `1/2/3`: switch tabs (Themes / Controls / Fonts)
+Keyboard flow:
+- `1/2/3/4`: switch tabs
 - `j/k` or `↑/↓`: move selection
-- `h/l` or `←/→` or `+/-`: adjust
+- `h/l` or `←/→` or `+/-`: adjust values / font size
 - `/`: search in current list tab
 - `i`: apply current selected item immediately
 - `u`: reset to selected theme defaults
+- `Enter`: confirm and apply all
 - `q`: cancel and rollback
 
 ## Shell Prompt Presets (zsh)
 
-The line like `(.venv) jayleonc/ghostty-rice »` is your **shell prompt** (zsh), not the Ghostty theme.
-If `zsh` is missing, `rice prompt` will warn and stop.
-By default, rice prompt is applied only in Ghostty sessions, so iTerm2 can keep your existing prompt.
+8 built-in prompt presets — from ultra-minimal to two-line with git branch:
+
+| Preset | Sample | Style |
+|--------|--------|-------|
+| **Zen** | `❯` | Status arrow only |
+| **Minimal Arrow** | `ghostty-rice ›` | Repo name + arrow |
+| **Lambda** | `λ ghostty-rice ›` | Lambda accent |
+| **Dev Compact** | `(.venv) repo/subdir »` | Virtualenv + short path |
+| **Starship** | `~/project main` ⏎ `❯` | Two-line with git branch |
+| **Boxed** | `┌ ~/project (main)` ⏎ `└ ❯` | Box-drawn frame + git |
+| **Deep Path** | `(.venv) ~/Dev/project ❯` | Full path |
+| **Context Rich** | `[.venv] jay@mbp project #` | user@host + path |
+
+Prompts can be selected inside `rice switch` (Tab 4) or standalone:
 
 ```bash
 rice prompt --install
@@ -171,8 +183,8 @@ First install requires one reload:
 source ~/.zshrc
 ```
 
-After that, changing preset via `rice prompt` is applied on the next prompt automatically in Ghostty zsh.
-The bootstrap also sets a muted default for `zsh-autosuggestions` and exports `COLORTERM=truecolor`.
+After that, changing preset via `rice prompt` or `rice switch` is applied on the next prompt automatically in Ghostty zsh.
+The bootstrap also sets a subtle default for `zsh-autosuggestions` (`fg=238`) and exports `COLORTERM=truecolor`.
 
 If you use Oh My Zsh / Starship / Powerlevel10k, keep the rice bootstrap near the end of `~/.zshrc` so it takes effect after other prompt initializers.
 

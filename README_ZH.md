@@ -137,31 +137,43 @@ rice current
 | **Gruvbox** | 复古暖调，Vim 用户最爱 |
 | **Dracula** | 经典暗色，标志性紫粉配色 |
 
-## Switch 交互控制
+## Rice Studio
 
-`rice switch` 现在直接内置完整控制面板，并且实时预览：
+`rice switch` 打开完整工作台 —— Mason/Lazy 风格的边框面板，4 个标签页：
 
-- 暗色主题族（Absolutely / Ayu / Catppuccin / Codex / Dracula / Everforest / GitHub / Gruvbox / Linear / Sentry / Solarized / Temple / Tokyo Night / VS Code Plus）
-- 强调色（Accent）
-- 背景/前景色
-- 代码字体 + 字号
-- 毛玻璃开关
-- 对比度
+| 标签 | 功能 |
+|------|------|
+| **1 Themes** | 浏览 14 个暗色主题族，实时预览 + 色块展示 |
+| **2 Appearance** | 强调色 / 背景色 / 前景色 / 对比度 / 毛玻璃开关 |
+| **3 Fonts** | 字体选择器 + 字号调节 |
+| **4 Prompt** | Shell Prompt 预设，带样例预览（确认后应用） |
 
-键位风格（接近 Mason/Lazy）：
-- `1/2/3`：切换标签（Themes / Controls / Fonts）
+键位风格（Mason/Lazy）：
+- `1/2/3/4`：切换标签
 - `j/k` 或 `↑/↓`：移动选择
-- `h/l` 或 `←/→` 或 `+/-`：调整参数
+- `h/l` 或 `←/→` 或 `+/-`：调整参数 / 字号
 - `/`：在当前列表标签内搜索
 - `i`：立即应用当前项
 - `u`：重置到当前主题默认值
+- `Enter`：确认并应用全部
 - `q`：取消并回滚
 
 ## Shell Prompt 预设（zsh）
 
-像 `(.venv) jayleonc/ghostty-rice »` 这行是 **shell prompt（zsh）**，不属于 Ghostty 主题本身。
-如果系统没有 `zsh`，`rice prompt` 会直接提示并停止。
-默认仅在 Ghostty 会话里启用，不会覆盖你 iTerm2 原有 prompt。
+8 个内置 Prompt 预设 —— 从极简到双行 git 分支：
+
+| 预设 | 样例 | 风格 |
+|------|------|------|
+| **Zen** | `❯` | 仅状态箭头 |
+| **Minimal Arrow** | `ghostty-rice ›` | 目录名 + 箭头 |
+| **Lambda** | `λ ghostty-rice ›` | Lambda 符号 |
+| **Dev Compact** | `(.venv) repo/subdir »` | 虚拟环境 + 短路径 |
+| **Starship** | `~/project main` ⏎ `❯` | 双行 + git 分支 |
+| **Boxed** | `┌ ~/project (main)` ⏎ `└ ❯` | 框线 + git 分支 |
+| **Deep Path** | `(.venv) ~/Dev/project ❯` | 完整路径 |
+| **Context Rich** | `[.venv] jay@mbp project #` | 用户@主机 + 路径 |
+
+可以在 `rice switch`（标签 4）中选择，也可以单独使用：
 
 ```bash
 rice prompt --install
@@ -173,8 +185,8 @@ rice prompt --install
 source ~/.zshrc
 ```
 
-之后再执行 `rice prompt`，在 Ghostty 的 zsh 会话里会在下一次提示符自动生效。
-同时会给 `zsh-autosuggestions` 设置更柔和的默认灰度，并导出 `COLORTERM=truecolor`。
+之后再执行 `rice prompt` 或 `rice switch`，在 Ghostty 的 zsh 会话里会在下一次提示符自动生效。
+同时会给 `zsh-autosuggestions` 设置更柔和的默认灰度（`fg=238`），并导出 `COLORTERM=truecolor`。
 
 如果你用了 Oh My Zsh / Starship / Powerlevel10k，请把 rice 的 bootstrap 放在 `~/.zshrc` 靠后位置，确保在其它 Prompt 初始化之后生效。
 
