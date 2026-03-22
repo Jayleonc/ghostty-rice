@@ -99,10 +99,10 @@ pip install -e .
 # List available profiles
 rice list
 
-# Rice Studio (Themes / Appearance / Fonts / Prompt — 4-tab live preview)
+# Interactive switch (Themes / Appearance / Fonts / Prompt — 4-tab live preview)
 rice switch
 
-# Interactive font studio (quality fonts only, +/- to resize live)
+# Interactive font picker (quality fonts only, +/- to resize live)
 rice font
 
 # Interactive zsh prompt picker + one-shot install to ~/.zshrc
@@ -135,9 +135,9 @@ rice current
 | **Gruvbox** | Retro groove with warm, earthy tones |
 | **Dracula** | Iconic dark theme with vibrant purple and pink |
 
-## Rice Studio
+## Rice Switch
 
-`rice switch` opens the full studio — a bordered, Mason/Lazy-style panel with 4 tabs:
+`rice switch` opens a bordered, Mason/Lazy-style panel with 4 tabs:
 
 | Tab | What it does |
 |-----|-------------|

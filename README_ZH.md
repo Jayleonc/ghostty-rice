@@ -101,7 +101,7 @@ pip install -e .
 # 查看所有可用方案
 rice list
 
-# Rice Studio（主题 / 外观 / 字体 / Prompt — 4 标签页实时预览）
+# 交互式 switch（主题 / 外观 / 字体 / Prompt — 4 标签页实时预览）
 rice switch
 
 # 交互式字体工作台（高质量字体筛选，+/- 可实时调字号）
@@ -137,7 +137,7 @@ rice current
 | **Gruvbox** | 复古暖调，Vim 用户最爱 |
 | **Dracula** | 经典暗色，标志性紫粉配色 |
 
-## Rice Studio
+## Rice Switch
 
 `rice switch` 打开完整工作台 —— Mason/Lazy 风格的边框面板，4 个标签页：
 

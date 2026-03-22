@@ -67,7 +67,7 @@ _STUDIO_CONTRAST_VALUES = [45, 50, 55, 60, 65, 70, 75]
 _STUDIO_MIN_FONT_SIZE = 10.0
 _STUDIO_MAX_FONT_SIZE = 18.0
 _STUDIO_FONT_STEP = 0.5
-_STUDIO_PROFILE_NAME = "Studio Live"
+_STUDIO_PROFILE_NAME = "Switch Live"
 
 
 @dataclass
@@ -624,7 +624,7 @@ def _render_studio_panel(
 
     panel = Panel(
         Group(*parts),
-        title="[bold]Rice Studio[/bold]",
+        title="[bold]Rice Switch[/bold]",
         border_style="bright_blue",
         expand=True,
         padding=(1, 1),
