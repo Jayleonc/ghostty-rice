@@ -43,8 +43,8 @@ macos-titlebar-style = transparent
 macos-icon = glass
 
 # --- Cursor ---
-cursor-style = block
-cursor-style-blink = false
+cursor-style = underline
+cursor-style-blink = true
 
 # --- Splits ---
 unfocused-split-opacity = 0.80

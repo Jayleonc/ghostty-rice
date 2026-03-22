@@ -39,8 +39,8 @@ macos-icon = glass
 # --- Cursor ---
 # Steady bar — slim, unobtrusive, like a bookmark in a novel.
 # Blinking blocks create visual noise that fights the calm palette.
-cursor-style = bar
-cursor-style-blink = false
+cursor-style = underline
+cursor-style-blink = true
 
 # --- Selection ---
 # Surface2 (#585b70) — just enough lift to see the selection,

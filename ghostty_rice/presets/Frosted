@@ -44,7 +44,7 @@ macos-icon = glass
 # --- Cursor ---
 # Block cursor is more visible on light backgrounds where a thin
 # bar can disappear into the text.
-cursor-style = block
+cursor-style = underline
 cursor-style-blink = true
 
 # --- Selection ---

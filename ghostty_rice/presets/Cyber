@@ -43,7 +43,7 @@ macos-icon = holographic
 # --- Cursor ---
 # Blinking block — the one profile where a pulsing cursor adds
 # to the cyberpunk rhythm, like a blinking server LED.
-cursor-style = block
+cursor-style = underline
 cursor-style-blink = true
 
 # --- Selection ---

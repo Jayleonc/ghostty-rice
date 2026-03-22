@@ -230,6 +230,8 @@ def build_studio_profile_body(
     background: str,
     foreground: str,
     translucent: bool,
+    cursor_style: str = "underline",
+    cursor_blink: bool = True,
 ) -> str:
     """Build Ghostty config body for studio selections."""
     accent_hex = _normalize_hex(accent)
@@ -254,8 +256,8 @@ def build_studio_profile_body(
             "window-padding-color = extend",
             "macos-titlebar-style = transparent",
             "macos-icon = glass",
-            "cursor-style = block",
-            "cursor-style-blink = false",
+            f"cursor-style = {cursor_style}",
+            f"cursor-style-blink = {'true' if cursor_blink else 'false'}",
             "unfocused-split-opacity = 0.80",
         ]
     )

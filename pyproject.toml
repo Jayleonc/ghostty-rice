@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ghostty-rice"
-version = "0.2.2"
+version = "0.2.3"
 description = "Full visual profile manager for Ghostty terminal — beyond just colors."
 readme = "README.md"
 license = "MIT"

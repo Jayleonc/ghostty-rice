@@ -41,8 +41,8 @@ window-decoration = false
 # --- Cursor ---
 # Steady bar — the quietest cursor. You know where you are
 # without anything moving on screen.
-cursor-style = bar
-cursor-style-blink = false
+cursor-style = underline
+cursor-style-blink = true
 
 # --- Selection ---
 selection-background = #555753

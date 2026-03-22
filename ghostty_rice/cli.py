@@ -53,6 +53,12 @@ from ghostty_rice.prompt import (
     zsh_available,
 )
 from ghostty_rice.reload import reload_ghostty
+from ghostty_rice.skill import (
+    detect_agents,
+    export_skill,
+    install_skill,
+    uninstall_skill,
+)
 from ghostty_rice.studio import (
     StudioTheme,
     accent_swatches,
@@ -71,6 +77,13 @@ _STUDIO_MAX_FONT_SIZE = 18.0
 _STUDIO_FONT_STEP = 0.5
 _STUDIO_PROFILE_NAME = "Switch Live"
 
+# Cursor style presets — only visually polished options, no raw bar.
+_CURSOR_STYLES: list[tuple[str, bool, str]] = [
+    ("underline", True, "Underline Blink"),
+    ("block", True, "Block Blink"),
+    ("block", False, "Block Steady"),
+]
+
 
 @dataclass
 class _StudioState:
@@ -82,6 +95,7 @@ class _StudioState:
     font_size: float
     translucent: bool
     prompt_index: int = 0
+    cursor_style_index: int = 0
 
 
 @dataclass
@@ -452,7 +466,7 @@ def _restore_config_snapshot(existed: bool, content: str) -> None:
         config_path.unlink()
 
 
-_APPEARANCE_ROW_COUNT = 4
+_APPEARANCE_ROW_COUNT = 5
 
 
 def _filter_indices_by_name(names: list[str], query: str) -> list[int]:
@@ -525,13 +539,15 @@ def _render_studio_panel(
             content_lines.append(line)
 
     elif ui.tab == 1:
-        appearance_data: list[tuple[str, str | None, bool | None]] = [
-            ("Accent", accents[state.accent_index], None),
-            ("Background", backgrounds[state.background_index], None),
-            ("Foreground", foregrounds[state.foreground_index], None),
-            ("Translucent", None, state.translucent),
+        cursor_label = _CURSOR_STYLES[state.cursor_style_index][2]
+        appearance_rows: list[tuple[str, str]] = [
+            ("Accent", f"██  {accents[state.accent_index]}"),
+            ("Background", f"██  {backgrounds[state.background_index]}"),
+            ("Foreground", f"██  {foregrounds[state.foreground_index]}"),
+            ("Translucent", "● On" if state.translucent else "○ Off"),
+            ("Cursor", cursor_label),
         ]
-        for i, (label, color_hex, toggle_val) in enumerate(appearance_data):
+        for i, (label, display) in enumerate(appearance_rows):
             line = Text("  ")
             if i == ui.appearance_cursor:
                 line.append("➤ ", style="green bold")
@@ -539,15 +555,24 @@ def _render_studio_panel(
             else:
                 line.append("  ")
                 line.append(f"{label:<20}")
-            if color_hex is not None:
+            if i < 3:
+                # Color swatch rows
+                color_hex = [accents[state.accent_index],
+                             backgrounds[state.background_index],
+                             foregrounds[state.foreground_index]][i]
                 line.append("██", style=color_hex)
                 line.append(f"  {color_hex}", style="dim")
                 line.append("    ◀ ▶", style="dim")
-            elif toggle_val is not None:
-                if toggle_val:
+            elif i == 3:
+                # Translucent toggle
+                if state.translucent:
                     line.append("● On", style="green")
                 else:
                     line.append("○ Off", style="dim")
+            elif i == 4:
+                # Cursor style
+                line.append(cursor_label)
+                line.append("    ◀ ▶", style="dim")
             content_lines.append(line)
 
     elif ui.tab == 2:
@@ -681,6 +706,11 @@ def _adjust_appearance_state(
     if row == 3:
         state.translucent = not state.translucent
         return True
+    if row == 4:
+        state.cursor_style_index = _row_cycle_index(
+            state.cursor_style_index, delta, len(_CURSOR_STYLES),
+        )
+        return True
     return False
 
 
@@ -692,7 +722,7 @@ def _studio_profile_signature(
     backgrounds: list[str],
     foregrounds: list[str],
     fonts: list[FontPreset],
-) -> tuple[str, str, str, str, str, str, bool]:
+) -> tuple[str, str, str, str, str, str, bool, int]:
     return (
         themes[state.theme_index].name,
         accents[state.accent_index],
@@ -701,6 +731,7 @@ def _studio_profile_signature(
         _font_family_from_preset(fonts[state.font_index]),
         _format_font_size(state.font_size),
         state.translucent,
+        state.cursor_style_index,
     )
 
 
@@ -713,12 +744,15 @@ def _build_studio_profile_body_from_state(
     foregrounds: list[str],
 ) -> str:
     theme = themes[state.theme_index]
+    cs, cb, _ = _CURSOR_STYLES[state.cursor_style_index]
     return build_studio_profile_body(
         theme=theme,
         accent=accents[state.accent_index],
         background=backgrounds[state.background_index],
         foreground=foregrounds[state.foreground_index],
         translucent=state.translucent,
+        cursor_style=cs,
+        cursor_blink=cb,
     )
 
 
@@ -1582,3 +1616,142 @@ def doctor_cmd(fix: bool) -> None:
         console.print("[green]All checks passed.[/green]")
     else:
         console.print("[yellow]Some checks need attention.[/yellow]")
+
+
+# ---------------------------------------------------------------------------
+# rice skill
+# ---------------------------------------------------------------------------
+
+
+@cli.group("skill")
+def skill_group() -> None:
+    """AI-powered theme generation skill for coding agents."""
+
+
+@skill_group.command("install")
+@click.option(
+    "--agent",
+    type=click.Choice(["claude-code", "cursor", "windsurf"]),
+    help="Install for a specific agent instead of auto-detecting.",
+)
+@click.option(
+    "--export",
+    "export_path",
+    type=click.Path(),
+    default=None,
+    help="Export the skill prompt to a custom path (for unsupported agents).",
+)
+def skill_install(agent: str | None, export_path: str | None) -> None:
+    """Install the theme-generation skill into your AI coding agent."""
+    # Export mode: write to arbitrary path
+    if export_path is not None:
+        from pathlib import Path
+
+        dest = export_skill(Path(export_path))
+        console.print(f"[green]Skill exported to:[/green] {dest}")
+        console.print("[dim]Paste or import this file into your AI agent's prompt/rules.[/dim]")
+        return
+
+    agents = detect_agents()
+
+    if agent:
+        # Filter to the requested agent
+        agents = [a for a in agents if a.name == agent]
+        if not agents:
+            console.print(
+                f"[yellow]{agent} not detected on this machine.[/yellow]\n"
+                f"[dim]Use --export <path> to export the skill prompt manually.[/dim]"
+            )
+            return
+
+    if not agents:
+        console.print(
+            "[yellow]No supported AI agents detected.[/yellow]\n"
+            "[dim]Supported: Claude Code, Cursor, Windsurf\n"
+            "Use --export <path> to export the skill prompt for other agents.[/dim]"
+        )
+        return
+
+    for target in agents:
+        if target.installed:
+            if not click.confirm(
+                f"  {target.display_name}: skill already installed. Overwrite?",
+                default=True,
+            ):
+                continue
+
+        path = install_skill(target)
+        console.print(f"  [green]✓[/green] {target.display_name} — installed to {path}")
+
+        if target.name == "claude-code":
+            console.print(
+                "    [dim]Usage: open Claude Code and type"
+                " [bold]/user:ghostty-theme[/bold][/dim]"
+            )
+        else:
+            console.print(
+                f"    [dim]The skill is now available as a global rule"
+                f" in {target.display_name}.[/dim]"
+            )
+
+    console.print()
+    console.print(
+        "[bold]Your AI agent can now generate custom Ghostty themes![/bold]\n"
+        "[dim]It will guide you through a few questions, then create a profile\n"
+        "that works seamlessly with `rice switch`.[/dim]"
+    )
+
+
+@skill_group.command("uninstall")
+@click.option(
+    "--agent",
+    type=click.Choice(["claude-code", "cursor", "windsurf"]),
+    help="Uninstall from a specific agent.",
+)
+def skill_uninstall(agent: str | None) -> None:
+    """Remove the theme-generation skill from AI coding agents."""
+    agents = detect_agents()
+
+    if agent:
+        agents = [a for a in agents if a.name == agent]
+
+    removed = 0
+    for target in agents:
+        if uninstall_skill(target):
+            console.print(f"  [green]✓[/green] Removed from {target.display_name}")
+            removed += 1
+
+    if removed == 0:
+        console.print("[dim]No installed skills found to remove.[/dim]")
+    else:
+        console.print(f"\n[green]Removed from {removed} agent(s).[/green]")
+
+
+@skill_group.command("status")
+def skill_status() -> None:
+    """Show which AI agents have the skill installed."""
+    agents = detect_agents()
+
+    if not agents:
+        console.print(
+            "[dim]No supported AI agents detected on this machine.[/dim]\n"
+            "[dim]Supported: Claude Code, Cursor, Windsurf[/dim]"
+        )
+        return
+
+    console.print("[bold]AI Agent Skill Status[/bold]\n")
+    for target in agents:
+        if target.installed:
+            icon = "[green]●[/green]"
+            status = "installed"
+        else:
+            icon = "[dim]○[/dim]"
+            status = "not installed"
+        console.print(f"  {icon} {target.display_name}: {status}")
+        if target.installed:
+            console.print(f"    [dim]{target.skill_path}[/dim]")
+
+    console.print(
+        "\n[dim]Run `rice skill install` to install, "
+        "`rice skill uninstall` to remove.[/dim]"
+    )

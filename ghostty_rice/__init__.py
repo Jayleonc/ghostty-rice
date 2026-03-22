@@ -1,3 +1,3 @@
 """ghostty-rice — Full visual profile manager for Ghostty terminal."""
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"

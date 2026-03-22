@@ -44,7 +44,7 @@ macos-icon = glass
 # Steady: the warm palette is already rich enough without
 # adding motion.
 cursor-style = underline
-cursor-style-blink = false
+cursor-style-blink = true
 
 # --- Selection ---
 # Gruvbox bg3 (#665c54) — warm grey that belongs to the palette,

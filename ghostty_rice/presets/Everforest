@@ -21,8 +21,8 @@ macos-titlebar-style = transparent
 macos-icon = glass
 
 # --- Cursor ---
-cursor-style = bar
-cursor-style-blink = false
+cursor-style = underline
+cursor-style-blink = true
 
 # --- Selection ---
 selection-background = #495156

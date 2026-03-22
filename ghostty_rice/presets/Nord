@@ -39,8 +39,8 @@ macos-icon = glass
 # --- Cursor ---
 # Block cursor in Nord's frost blue — a deliberate, confident
 # marker. No blink: Scandinavian design doesn't fidget.
-cursor-style = block
-cursor-style-blink = false
+cursor-style = underline
+cursor-style-blink = true
 
 # --- Selection ---
 # Polar Night 3 (#4c566a) — the designated "UI highlight" tier

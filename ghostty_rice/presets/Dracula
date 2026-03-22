@@ -42,7 +42,7 @@ macos-icon = glass
 # --- Cursor ---
 # Blinking block in Dracula pink — bold, theatrical, deliberate.
 # This is the one theme where a blinking block cursor is on-brand.
-cursor-style = block
+cursor-style = underline
 cursor-style-blink = true
 
 # --- Selection ---
